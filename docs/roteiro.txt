@@ -238,3 +238,36 @@ Then, define your models in prisma/schema.prisma and run prisma migrate dev to a
 
 Learn more: https://pris.ly/getting-started
 
+
+
+------------------------------ 04/12/2025
+
+npm install prisma @types/node @types/pg --save-dev
+npm install @prisma/client @prisma/adapter-pg pg dotenv
+
+npx prisma init --datasource-provider postgresql --output ../generated/prisma
+
+Alterar o arquivo .env no projeto api
+
+	- Incluir a entrada de conexão com o Neon (connect)
+	
+	-- Criação do Cleinte para conectar com o banco
+	npx prisma generate	
+
+7. Instantiate Prisma Client
+Create a utility file to instantiate Prisma Client. You need to pass an instance of Prisma ORM's driver adapter to the PrismaClient constructor:
+
+lib/prisma.ts
+
+import "dotenv/config";
+import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '../generated/prisma/client'
+
+const connectionString = `${process.env.DATABASE_URL}`
+
+const adapter = new PrismaPg({ connectionString })
+const prisma = new PrismaClient({ adapter })
+
+export { prisma }
+
+npx prisma migrate dev --name initial_migration
