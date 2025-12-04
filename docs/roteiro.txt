@@ -1,0 +1,240 @@
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>npm login
+npm notice Log in on https://registry.npmjs.org/
+npm notice SECURITY NOTICE: Classic tokens expire December 9. Granular tokens now limited to 90 days with 2FA enforced by default. Update your CI/CD workflows to avoid disruption. Learn more: https://gh.io/npm-token-changes
+Login at:
+https://www.npmjs.com/login?next=/login/cli/6e83e42f-5109-4336-8338-60fd85a69569
+Press ENTER to open in the browser...
+Username: joao.ssa
+npm ERR! canceled
+
+npm ERR! A complete log of this run can be found in: C:\Users\joaos\AppData\Local\npm-cache\_logs\2025-12-04T00_06_41_753Z-debug-0.log
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>npm login
+npm notice Log in on https://registry.npmjs.org/
+npm notice SECURITY NOTICE: Classic tokens expire December 9. Granular tokens now limited to 90 days with 2FA enforced by default. Update your CI/CD workflows to avoid disruption. Learn more: https://gh.io/npm-token-changes
+Login at:
+https://www.npmjs.com/login?next=/login/cli/45525d55-fcd3-4855-b889-35e9ea1e92ad
+Press ENTER to open in the browser...
+
+Logged in on https://registry.npmjs.org/.
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>npm whoami
+joao.ssa
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>npm install @prisma/cli --save-dev
+npm WARN deprecated @prisma/cli@2.20.1: Prisma CLI package was renamed to 'prisma'. Check it out here: https://www.npmjs.com/package/prisma
+npm ERR! code 1
+npm ERR! path F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025\node_modules\@prisma\cli
+npm ERR! command failed
+npm ERR! command C:\WINDOWS\system32\cmd.exe /d /s /c node scripts/preinstall-entry.js
+npm ERR! ┌─────────────────────────────────────────────────────────────────────────────┐
+npm ERR! │                                                                             │
+npm ERR! │     The package @prisma/cli has been renamed to prisma.                     │
+npm ERR! │                                                                             │
+npm ERR! │     Please uninstall @prisma/cli first.                                     │
+npm ERR! │     Then install prisma to continue using Prisma CLI:                       │
+npm ERR! │                                                                             │
+npm ERR! │         # Uninstall old CLI                                                 │
+npm ERR! │         npm uninstall @prisma/cli                                           │
+npm ERR! │                                                                             │
+npm ERR! │         # Install new CLI                                                   │
+npm ERR! │         npm install prisma --save-dev                                       │
+npm ERR! │                                                                             │
+npm ERR! │         # Invoke via npx                                                    │
+npm ERR! │         npx prisma --help                                                   │
+npm ERR! │                                                                             │
+npm ERR! │     Learn more here: https://github.com/prisma/prisma/releases/tag/2.16.0   │
+npm ERR! │                                                                             │
+npm ERR! └─────────────────────────────────────────────────────────────────────────────┘
+
+npm ERR! A complete log of this run can be found in: C:\Users\joaos\AppData\Local\npm-cache\_logs\2025-12-04T00_32_06_368Z-debug-0.log
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>npm uninstall @prisma/cli
+
+up to date in 522ms
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>npm install prisma --save-dev
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'prisma@7.1.0',
+npm WARN EBADENGINE   required: { node: '^20.19 || ^22.12 || >=24.0' },
+npm WARN EBADENGINE   current: { node: 'v20.12.2', npm: '10.5.0' }
+npm WARN EBADENGINE }
+npm WARN cleanup Failed to remove some directories [
+npm WARN cleanup   [
+npm WARN cleanup     'F:\\DEVELOPER_Projects\\SRC\\Fonte\\IBG\\cecom_2025\\node_modules',
+npm WARN cleanup     [Error: EPERM: operation not permitted, rmdir 'F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025\node_modules\@prisma\studio-core'] {
+npm WARN cleanup       errno: -4048,
+npm WARN cleanup       code: 'EPERM',
+npm WARN cleanup       syscall: 'rmdir',
+npm WARN cleanup       path: 'F:\\DEVELOPER_Projects\\SRC\\Fonte\\IBG\\cecom_2025\\node_modules\\@prisma\\studio-core'
+npm WARN cleanup     }
+npm WARN cleanup   ],
+npm WARN cleanup   [
+npm WARN cleanup     'F:\\DEVELOPER_Projects\\SRC\\Fonte\\IBG\\cecom_2025\\node_modules\\@prisma',
+npm WARN cleanup     [Error: EPERM: operation not permitted, rmdir 'F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025\node_modules\@prisma\fetch-engine'] {
+npm WARN cleanup       errno: -4048,
+npm WARN cleanup       code: 'EPERM',
+npm WARN cleanup       syscall: 'rmdir',
+npm WARN cleanup       path: 'F:\\DEVELOPER_Projects\\SRC\\Fonte\\IBG\\cecom_2025\\node_modules\\@prisma\\fetch-engine'
+npm WARN cleanup     }
+npm WARN cleanup   ]
+npm WARN cleanup ]
+npm ERR! code 1
+npm ERR! path F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025\node_modules\prisma
+npm ERR! command failed
+npm ERR! command C:\WINDOWS\system32\cmd.exe /d /s /c node scripts/preinstall-entry.js
+npm ERR! ┌────────────────────────────────────────────────────────────────────┐
+npm ERR! │    Prisma only supports Node.js versions 20.19+, 22.12+, 24.0+.    │
+npm ERR! │    Please upgrade your Node.js version.                            │
+npm ERR! └────────────────────────────────────────────────────────────────────┘
+
+npm ERR! A complete log of this run can be found in: C:\Users\joaos\AppData\Local\npm-cache\_logs\2025-12-04T00_33_43_630Z-debug-0.log
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>nvm list
+
+  * 20.12.2 (Currently using 64-bit executable)
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>nvm install 20.19.1
+Downloading node.js version 20.19.1 (64-bit)...
+Extracting node and npm...
+Complete
+Installation complete.
+If you want to use this version, type:
+
+nvm use 20.19.1
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>nvm use 20.19.1
+Now using node v20.19.1 (64-bit)
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>nvm list
+
+  * 20.19.1 (Currently using 64-bit executable)
+    20.12.2
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>node -v
+v20.19.1
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>npm -v
+10.8.2
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>npm install
+npm error code ENOENT
+npm error syscall open
+npm error path F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025\package.json
+npm error errno -4058
+npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open 'F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025\package.json'
+npm error enoent This is related to npm not being able to find a file.
+npm error enoent
+npm error A complete log of this run can be found in: C:\Users\joaos\AppData\Local\npm-cache\_logs\2025-12-04T00_41_54_158Z-debug-0.log
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>npm init -y
+Wrote to F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025\package.json:
+
+{
+  "name": "cecom_2025",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+
+
+
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>npm create vite@latest . -- --template react
+Need to install the following packages:
+create-vite@8.2.0
+Ok to proceed? (y) y
+
+
+> cecom_2025@1.0.0 npx
+> create-vite . --template react
+
+|
+o  Current directory is not empty. Please choose how to proceed:
+|  Remove existing files and continue
+|
+o  Use rolldown-vite (Experimental)?:
+|  No
+|
+o  Install with npm and start now?
+|  Yes
+|
+o  Scaffolding project in F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025...
+|
+o  Installing dependencies with npm...
+
+added 157 packages, and audited 158 packages in 34s
+
+33 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+|
+o  Starting dev server...
+
+> cecom_2025@0.0.0 dev
+> vite
+
+
+  VITE v7.2.6  ready in 539 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+Deseja finalizar o arquivo em lotes (S/N)? S
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>cd..
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG>cd F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1>git init
+Initialized empty Git repository in F:/DEVELOPER_Projects/SRC/Fonte/IBG/cecom_2025_1/.git/
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1>cd cecom.saude.web
+
+(base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.web>
+
+npm install @mui/material @emotion/react @emotion/styled
+
+
+API
+F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api>npm install express cors dotenv
+
+npm install @prisma/client
+
+Initialized Prisma in your project
+
+  prisma/
+    schema.prisma
+  prisma.config.ts
+  .env
+  .gitignore
+
+Next, choose how you want to set up your database:
+
+CONNECT EXISTING DATABASE:
+  1. Configure your DATABASE_URL in prisma.config.ts
+  2. Run prisma db pull to introspect your database.
+
+CREATE NEW DATABASE:
+  Local: npx prisma dev (runs Postgres locally in your terminal)
+  Cloud: npx create-db (creates a free Prisma Postgres database)
+
+Then, define your models in prisma/schema.prisma and run prisma migrate dev to apply your schema.
+
+Learn more: https://pris.ly/getting-started
+
