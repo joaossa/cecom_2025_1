@@ -271,3 +271,22 @@ const prisma = new PrismaClient({ adapter })
 export { prisma }
 
 npx prisma migrate dev --name initial_migration
+
+F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api>npx prisma migrate dev --name initial_migration
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "neondb", schema "public" at "ep-purple-grass-accsrtnk.sa-east-1.aws.neon.tech"
+
+Applying migration `20251204154644_initial_migration`
+
+The following migration(s) have been created and applied from new schema changes:
+
+prisma\migrations/
+  └─ 20251204154644_initial_migration/
+    └─ migration.sql
+
+Your database is now in sync with your schema.
+
+
+F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api>
