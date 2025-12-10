@@ -290,3 +290,185 @@ Your database is now in sync with your schema.
 
 
 F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api>
+
+
+model Cargo {
+  id        Int      @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao String   @db.VarChar(50)
+  cdNivel   Int?     @db.Integer
+  stInativo SimNao?  @map("stInativo")
+
+  @@map("cecom.cargos")
+}
+
+model Escolaridade {
+  id        Int      @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao String   @db.VarChar(50)
+  stInativo SimNao?  @map("stInativo")
+
+  @@map("cecom.escolaridades")
+}
+
+model Horario {
+  id            Int       @id @db.SmallInt @map("codigo")
+  stUsoRestrito SimNao?   @map("stUsoRestrito")
+  descricao     String    @db.VarChar(50) @map("dsHorario")
+  hrInicio      DateTime  @db.Timestamptz @map("hrInicio")
+  hrFim         DateTime? @db.Timestamptz @map("hrFim")
+  stInativo     SimNao?   @map("stInativo")
+
+  @@map("cecom.horarios")
+}
+
+model LocalAtendimento {
+  id           Int      @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao    String   @db.VarChar(100)
+  siglaUnidade String?  @db.VarChar(10)
+  endereco     String?  @db.VarChar(150)
+  telefone     String?  @db.VarChar(50)
+
+  @@map("cecom.locaisatendimentos")
+}
+
+model MotivoDesistencia {
+  id        Int    @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao String @db.VarChar(50)
+
+  @@map("cecom.motivosdesistencia")
+}
+
+model MotivoExclamacao {
+  id        Int      @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao String   @db.VarChar(50)
+  stInativo SimNao?  @map("stInativo")
+
+  @@map("cecom.motivosexclamacao")
+}
+
+model Ocupacao {
+  id              Int      @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao       String   @db.VarChar(250)
+  ocupacao        String?  @db.VarChar(10)
+  cdOcupacaoPai   Int?     @db.SmallInt @map("cd_ocupacaopai")
+  stInativo       SimNao?  @map("stInativo")
+
+  ocupacaoPai     Ocupacao? @relation("OcupacaoPai", fields: [cdOcupacaoPai], references: [id])
+  subocupacoes    Ocupacao[] @relation("OcupacaoPai")
+
+  @@map("cecom.ocupacoes")
+}
+
+model Pais {
+  id            Int      @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao     String   @db.VarChar(35)
+  nacionalidade String?  @db.VarChar(50)
+  cdIbge        Int?     @db.Integer @map("cdIbge")
+
+  cidades       Cidade[]
+
+  @@map("cecom.paises")
+}
+
+model Plano {
+  id             Int       @id @db.SmallInt @map("codigo")
+  descricao      String    @db.VarChar(50)
+  valor          Decimal   @db.Decimal(12,2)
+  qtdProfissionais Int     @db.SmallInt @map("qtd_profissinais")
+  qtdClinicas     Int      @db.SmallInt @map("qtd_clinicas")
+  validadeInicio  DateTime @db.Timestamptz @map("validade_inicio")
+  validadeFinal   DateTime? @db.Timestamptz @map("validade_final")
+  stInativo       SimNao?  @map("stInativo")
+
+  @@map("cecom.planos")
+}
+
+model TipoEvolucao {
+  id        Int    @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao String @db.VarChar(50)
+
+  @@map("cecom.tiposevolucoes")
+}
+
+model TipoProcedimento {
+  id        Int    @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao String @db.VarChar(50)
+
+  @@map("cecom.tiposprocedimentos")
+}
+
+model TipoRecebimento {
+  id        Int    @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao String @db.VarChar(50)
+
+  @@map("cecom.tiposrecebimento")
+}
+
+model UnidadeFederacao {
+  id        String @id @db.VarChar(2) @map("codigo")
+  descricao String @db.VarChar(100)
+
+  @@map("cecom.unidadesfederacao")
+}
+
+model Cidade {
+  id         Int      @id @default(autoincrement()) @db.SmallInt @map("codigo")
+  descricao  String   @db.VarChar(100)
+  cdUf       String   @db.VarChar(2) @map("cdUf")
+  cdPais     Int      @db.SmallInt @map("cdPais")
+  cepGeral   String   @db.VarChar(9) @map("cepGeral")
+  cdIbge     Int?     @db.Integer @map("cdIbge")
+  stInativo  SimNao?  @map("stInativo")
+
+  // Relação com Pais
+  pais        Pais            @relation(fields: [cdPais], references: [id])
+
+  // Relação com UnidadeFederacao
+  unidadeFederacao UnidadeFederacao @relation(fields: [cdUf], references: [id])
+
+  @@map("cecom.cidades")
+}
+
+
+
+toda vez que criar novas tabelas ou alterar existentes...
+
+npx prisma migrate initial_migration
+
+SE O BANCO JÁ EXISTE E JÁ TEM TABELAS CECOM CRIADAS MANUALMENTE
+
+npx prisma migrate dev --name alguma_descricao_do_que_foi_mudado
+
+SE (e somente se) aparecer drift detected:
+npx prisma migrate reset
+
+npx prisma migrate dev --name module4
+
+
+
+PS F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api> npx prisma migrate dev --name module38
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "postgres", schema "cecom" at "localhost:5432"
+
+
+Error: Prisma schema validation - (validate wasm)
+Error code: P1012
+error: Type "Paciente" is neither a built-in type, nor refers to another model, composite type, or enum.
+  -->  prisma\schema.prisma:267
+   | 
+266 |   endereco   Endereco @relation(fields: [cdEndereco], references: [id])
+267 |   paciente   Paciente @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
+   | 
+error: Type "Profissional" is neither a built-in type, nor refers to another model, composite type, or enum.
+  -->  prisma\schema.prisma:280
+   | 
+279 |   endereco   Endereco      @relation(fields: [cdEndereco], references: [id])
+280 |   profissional Profissional @relation(fields: [cdProf], references: [id])
+   | 
+
+Validation Error Count: 2
+[Context: validate]
+
+Prisma CLI Version : 7.1.0
+PS F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api> 
