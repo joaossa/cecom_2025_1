@@ -101,8 +101,9 @@ model Endereco {
   cidade Cidade @relation(fields: [cdCidade], references: [id])
   bairro Bairro @relation(fields: [cdBairro], references: [id])
 
-  pacientes     EnderecoPaciente[]
-  profissionais EnderecoProfissional[]
+  pacientes                  EnderecoPaciente[]
+  profissionais              EnderecoProfissional[]
+  enderecoPessoaRelacionadas EnderecoPessoaRelacionada[]
 
   @@map("cecom.enderecos")
 }
@@ -236,6 +237,7 @@ model PessoaRelacionada {
   stInativo SimNao? @map("stInativo")
 
   parentescos ParentescoPaciente[]
+  enderecos   EnderecoPessoaRelacionada[]
 
   @@map("cecom.pessoasrelacionadas")
 }
@@ -387,4 +389,19 @@ model Bairro {
   enderecos Endereco[]
 
   @@map("cecom.bairros")
+}
+
+//-------------------------------------------------------
+// MÓDULO 14 — ENDEREÇO PARA PESSOA RELACIONADA
+//-------------------------------------------------------
+
+model EnderecoPessoaRelacionada {
+  id         Int @id @default(autoincrement()) @db.Integer
+  cdPessoa   Int
+  cdEndereco Int
+
+  pessoaRelacionada PessoaRelacionada @relation(fields: [cdPessoa], references: [id])
+  endereco          Endereco          @relation(fields: [cdEndereco], references: [id])
+
+  @@map("cecom.enderecospessoasrelacionadas")
 }
