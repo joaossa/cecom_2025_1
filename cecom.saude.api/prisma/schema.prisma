@@ -503,16 +503,28 @@ model SinaisVitais {
   id            Int      @id @default(autoincrement())
   cdAtendimento Int
   data          DateTime @default(now())
-  paSistolica   Int?
-  paDiastolica  Int?
-  fc            Int?
-  fr            Int?
-  temperatura   Decimal? @db.Decimal
-  spo2          Int?
-  peso          Decimal? @db.Decimal
-  altura        Decimal? @db.Decimal
-  imc           Decimal? @db.Decimal
-  dor           Int?
+
+  // Valores fisiológicos principais
+  paSistolica  Int?
+  paDiastolica Int?
+  fc           Int? // frequência cardíaca
+  fr           Int? // frequência respiratória
+  temperatura  Decimal? @db.Decimal
+  spo2         Int? // saturação periférica
+  peso         Decimal? @db.Decimal
+  altura       Decimal? @db.Decimal
+
+  // Cálculos derivados
+  imc Decimal? @db.Decimal // peso / altura²
+  pam Decimal? @db.Decimal // (PAS + 2*PAD) / 3
+
+  // Classificação clínica automática
+  riscoClinico String? @db.VarChar(20) // "Normal", "Alerta", "Crítico"
+
+  // Metadados de coleta
+  metodoColeta  String? @db.VarChar(50) // "Manual", "Oxímetro", "Esfigmo", "IoT"
+  dispositivoId String? @db.VarChar(50) // ID de dispositivos BLE / IoT
+  metadados     Json?
 
   atendimento Atendimento @relation(fields: [cdAtendimento], references: [id])
 
