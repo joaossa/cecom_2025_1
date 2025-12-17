@@ -6,38 +6,38 @@
 
 */
 -- AlterTable
-ALTER TABLE "cecom.enderecos" DROP COLUMN "bairro",
+ALTER TABLE cecom.enderecos DROP COLUMN "bairro",
 ADD COLUMN     "cdBairro" INTEGER NOT NULL;
 
 -- CreateTable
-CREATE TABLE "cecom.distritos" (
+CREATE TABLE cecom.distritos (
     "id" SERIAL NOT NULL,
     "cdCidade" INTEGER NOT NULL,
     "descricao" VARCHAR(120) NOT NULL,
     "stInativo" "SimNao",
 
-    CONSTRAINT "cecom.distritos_pkey" PRIMARY KEY ("id")
+    CONSTRAINT distritos_pkey PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "cecom.bairros" (
+CREATE TABLE cecom.bairros (
     "id" SERIAL NOT NULL,
     "cdDistrito" INTEGER,
     "cdCidade" INTEGER NOT NULL,
     "descricao" VARCHAR(120) NOT NULL,
     "stInativo" "SimNao",
 
-    CONSTRAINT "cecom.bairros_pkey" PRIMARY KEY ("id")
+    CONSTRAINT bairros_pkey PRIMARY KEY ("id")
 );
 
 -- AddForeignKey
-ALTER TABLE "cecom.enderecos" ADD CONSTRAINT "cecom.enderecos_cdBairro_fkey" FOREIGN KEY ("cdBairro") REFERENCES "cecom.bairros"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE cecom.enderecos ADD CONSTRAINT enderecos_cdBairro_fkey FOREIGN KEY ("cdBairro") REFERENCES cecom.bairros("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "cecom.distritos" ADD CONSTRAINT "cecom.distritos_cdCidade_fkey" FOREIGN KEY ("cdCidade") REFERENCES "cecom.cidades"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE cecom.distritos ADD CONSTRAINT distritos_cdCidade_fkey FOREIGN KEY ("cdCidade") REFERENCES cecom.cidades("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "cecom.bairros" ADD CONSTRAINT "cecom.bairros_cdDistrito_fkey" FOREIGN KEY ("cdDistrito") REFERENCES "cecom.distritos"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE cecom.bairros ADD CONSTRAINT bairros_cdDistrito_fkey FOREIGN KEY ("cdDistrito") REFERENCES cecom.distritos("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "cecom.bairros" ADD CONSTRAINT "cecom.bairros_cdCidade_fkey" FOREIGN KEY ("cdCidade") REFERENCES "cecom.cidades"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE cecom.bairros ADD CONSTRAINT bairros_cdCidade_fkey FOREIGN KEY ("cdCidade") REFERENCES cecom.cidades("id") ON DELETE RESTRICT ON UPDATE CASCADE;

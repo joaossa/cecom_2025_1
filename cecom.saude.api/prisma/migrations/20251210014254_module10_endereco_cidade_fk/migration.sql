@@ -6,8 +6,8 @@
 
 */
 -- AlterTable
-ALTER TABLE "cecom.enderecos" DROP COLUMN "cidade",
+ALTER TABLE cecom.enderecos DROP COLUMN "cidade",
 ADD COLUMN     "cdCidade" INTEGER NOT NULL;
 
 -- AddForeignKey
-ALTER TABLE "cecom.enderecos" ADD CONSTRAINT "cecom.enderecos_cdCidade_fkey" FOREIGN KEY ("cdCidade") REFERENCES "cecom.cidades"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE cecom.enderecos ADD CONSTRAINT enderecos_cdCidade_fkey FOREIGN KEY ("cdCidade") REFERENCES cecom.cidades("id") ON DELETE RESTRICT ON UPDATE CASCADE;

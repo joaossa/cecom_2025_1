@@ -20,6 +20,24 @@ enum Sexo {
   I
 }
 
+enum VersaoCid {
+  c9
+  c10
+}
+
+enum VersaoDsm {
+  d4
+  d5
+}
+
+enum HumorIntensidade {
+  NIVEL_1 @map("1")
+  NIVEL_2 @map("2")
+  NIVEL_3 @map("3")
+  NIVEL_4 @map("4")
+  NIVEL_5 @map("5")
+}
+
 model Master {
   id         Int      @id @default(autoincrement()) @map("codigo") @db.Integer
   nome       String   @map("nome") @db.VarChar(120)
@@ -189,9 +207,10 @@ model Atendimento {
   data           DateTime @db.Timestamptz
   observacao     String?  @db.VarChar(500)
 
-  paciente     Paciente     @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
-  profissional Profissional @relation(fields: [cdProfissional], references: [id])
+  paciente     Paciente       @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
+  profissional Profissional   @relation(fields: [cdProfissional], references: [id])
   evolucaos    Evolucao[]
+  sinaisVitais SinaisVitais[]
 
   @@map("cecom.atendimentos")
 }
@@ -207,9 +226,19 @@ model Evolucao {
   data           DateTime @db.Timestamptz
   texto          String   @db.VarChar(2000)
 
-  atendimento        Atendimento  @relation(fields: [cdAtendimento], references: [id])
-  profissional       Profissional @relation(fields: [cdProfissional], references: [id])
-  paciente           Paciente?    @relation(fields: [pacienteCdMaster, pacienteCdPaciente], references: [cdMaster, cdPaciente])
+  tipoEvolucaoClinicaId Int?              @map("cdTipoEvolucaoClinica")
+  humor                 HumorIntensidade?
+  alertaRisco           Boolean?          @default(false)
+  agravamento           Boolean?          @default(false)
+  textoEstruturado      Json?
+
+  atendimento         Atendimento          @relation(fields: [cdAtendimento], references: [id])
+  profissional        Profissional         @relation(fields: [cdProfissional], references: [id])
+  tipoEvolucaoClinica TipoEvolucaoClinica? @relation(fields: [tipoEvolucaoClinicaId], references: [id])
+
+  cid                EvolucaoCid[]
+  dsm                EvolucaoDsm[]
+  paciente           Paciente?     @relation(fields: [pacienteCdMaster, pacienteCdPaciente], references: [cdMaster, cdPaciente])
   pacienteCdMaster   Int?
   pacienteCdPaciente Int?
 
@@ -283,12 +312,12 @@ model TipoProcedimento {
   @@map("cecom.tiposprocedimentos")
 }
 
-model TipoEvolucao {
+model TipoEvolucaoSimples {
   id        Int     @id @default(autoincrement()) @db.Integer
   descricao String  @db.VarChar(120)
   stInativo SimNao? @map("stInativo")
 
-  @@map("cecom.tiposevolucoes")
+  @@map("cecom.tiposevolucaosimples")
 }
 
 //-------------------------------------------------------
@@ -404,4 +433,88 @@ model EnderecoPessoaRelacionada {
   endereco          Endereco          @relation(fields: [cdEndereco], references: [id])
 
   @@map("cecom.enderecospessoasrelacionadas")
+}
+
+//-------------------------------------------------------
+// MÓDULO 15 — CID, DSM E TIPO DE EVOLUÇÃO CLÍNICA
+//-------------------------------------------------------
+
+model Cid {
+  id           Int           @id @default(autoincrement()) @db.Integer
+  codigo       String        @db.VarChar(10)
+  descricao    String        @db.VarChar(300)
+  versao       VersaoCid
+  stInativo    SimNao?       @map("stInativo")
+  evolucaoCids EvolucaoCid[]
+
+  @@unique([codigo, versao])
+  @@map("cecom.cid")
+}
+
+model Dsm {
+  id           Int           @id @default(autoincrement()) @db.Integer
+  codigo       String        @db.VarChar(10)
+  descricao    String        @db.VarChar(300)
+  versao       VersaoDsm
+  stInativo    SimNao?       @map("stInativo")
+  evolucaoDsms EvolucaoDsm[]
+
+  @@unique([codigo, versao])
+  @@map("cecom.dsm")
+}
+
+// Tipos modernos de evolução clínica
+model TipoEvolucaoClinica {
+  id        Int        @id @default(autoincrement()) @db.Integer
+  descricao String     @db.VarChar(120)
+  stInativo SimNao?    @map("stInativo")
+  evolucaos Evolucao[]
+
+  @@map("cecom.tiposevolucoesclinicas")
+}
+
+//-------------------------------------------------------
+// MÓDULO 16 — RELACIONAMENTO EVOLUCAO ↔ CID / DSM
+//-------------------------------------------------------
+
+model EvolucaoCid {
+  id         Int @id @default(autoincrement()) @db.Integer
+  cdEvolucao Int
+  cdCid      Int
+
+  evolucao Evolucao @relation(fields: [cdEvolucao], references: [id])
+  cid      Cid      @relation(fields: [cdCid], references: [id])
+
+  @@map("cecom.evolucoescid")
+}
+
+model EvolucaoDsm {
+  id         Int @id @default(autoincrement()) @db.Integer
+  cdEvolucao Int
+  cdDsm      Int
+
+  evolucao Evolucao @relation(fields: [cdEvolucao], references: [id])
+  dsm      Dsm      @relation(fields: [cdDsm], references: [id])
+
+  @@map("cecom.evolucoesdsm")
+}
+
+model SinaisVitais {
+  id            Int      @id @default(autoincrement())
+  cdAtendimento Int
+  data          DateTime @default(now())
+  paSistolica   Int?
+  paDiastolica  Int?
+  fc            Int?
+  fr            Int?
+  temperatura   Decimal? @db.Decimal
+  spo2          Int?
+  peso          Decimal? @db.Decimal
+  altura        Decimal? @db.Decimal
+  imc           Decimal? @db.Decimal
+  dor           Int?
+
+  atendimento Atendimento @relation(fields: [cdAtendimento], references: [id])
+
+  @@map("cecom.sinaisvitais")
 }

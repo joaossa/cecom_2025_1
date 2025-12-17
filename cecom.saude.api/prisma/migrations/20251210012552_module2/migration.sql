@@ -6,13 +6,13 @@
 
 */
 -- AlterTable
-ALTER TABLE "cecom.pacientes" ADD COLUMN     "dtNascimento" DATE,
+ALTER TABLE cecom.pacientes ADD COLUMN     "dtNascimento" DATE,
 ADD COLUMN     "nome" VARCHAR(120) NOT NULL,
 ADD COLUMN     "sexo" "Sexo",
 ADD COLUMN     "stInativo" "SimNao";
 
 -- AlterTable
-ALTER TABLE "cecom.profissionais" ADD COLUMN     "conselho" VARCHAR(30),
+ALTER TABLE cecom.profissionais ADD COLUMN     "conselho" VARCHAR(30),
 ADD COLUMN     "nome" VARCHAR(120) NOT NULL,
 ADD COLUMN     "sexo" "Sexo",
 ADD COLUMN     "stInativo" "SimNao";

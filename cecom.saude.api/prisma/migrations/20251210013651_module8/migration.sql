@@ -1,35 +1,35 @@
 -- CreateTable
-CREATE TABLE "cecom.planos" (
+CREATE TABLE cecom.planos (
     "id" SERIAL NOT NULL,
     "descricao" VARCHAR(120) NOT NULL,
     "stInativo" "SimNao",
 
-    CONSTRAINT "cecom.planos_pkey" PRIMARY KEY ("id")
+    CONSTRAINT planos_pkey PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "cecom.motivos" (
+CREATE TABLE cecom.motivos (
     "id" SERIAL NOT NULL,
     "descricao" VARCHAR(200) NOT NULL,
     "stInativo" "SimNao",
 
-    CONSTRAINT "cecom.motivos_pkey" PRIMARY KEY ("id")
+    CONSTRAINT motivos_pkey PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "cecom.tiposprocedimentos" (
+CREATE TABLE cecom.tiposprocedimentos (
     "id" SERIAL NOT NULL,
     "descricao" VARCHAR(120) NOT NULL,
     "stInativo" "SimNao",
 
-    CONSTRAINT "cecom.tiposprocedimentos_pkey" PRIMARY KEY ("id")
+    CONSTRAINT tiposprocedimentos_pkey PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "cecom.tiposevolucoes" (
+CREATE TABLE cecom.tiposevolucoes (
     "id" SERIAL NOT NULL,
     "descricao" VARCHAR(120) NOT NULL,
     "stInativo" "SimNao",
 
-    CONSTRAINT "cecom.tiposevolucoes_pkey" PRIMARY KEY ("id")
+    CONSTRAINT tiposevolucoes_pkey PRIMARY KEY ("id")
 );
