@@ -38,6 +38,21 @@ enum HumorIntensidade {
   NIVEL_5 @map("5")
 }
 
+enum OrigemAfericao {
+  MANUAL
+  OXIMETRO
+  BALANCA
+  RELOGIO_INTELIGENTE
+  MONITOR_HOSPITALAR
+}
+
+enum PosicaoPaciente {
+  SENTADO
+  DEITADO
+  ORTOSTATICO
+  EM_PE
+}
+
 model Master {
   id         Int      @id @default(autoincrement()) @map("codigo") @db.Integer
   nome       String   @map("nome") @db.VarChar(120)
@@ -94,10 +109,13 @@ model Profissional {
 
   master Master @relation(fields: [cdMaster], references: [id])
 
-  enderecos    EnderecoProfissional[]
-  contatos     ContatoProfissional[]
-  atendimentos Atendimento[]
-  evolucoes    Evolucao[]
+  enderecos         EnderecoProfissional[]
+  contatos          ContatoProfissional[]
+  atendimentos      Atendimento[]
+  evolucoes         Evolucao[]
+  glasgows          Glasgow[]
+  afericoesClinicas AfericaoClinica[]
+  evaDores          EvaDor[] 
 
   @@map("cecom.profissionais")
 }
@@ -207,10 +225,13 @@ model Atendimento {
   data           DateTime @db.Timestamptz
   observacao     String?  @db.VarChar(500)
 
-  paciente     Paciente       @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
-  profissional Profissional   @relation(fields: [cdProfissional], references: [id])
-  evolucaos    Evolucao[]
-  sinaisVitais SinaisVitais[]
+  paciente          Paciente          @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
+  profissional      Profissional      @relation(fields: [cdProfissional], references: [id])
+  evolucaos         Evolucao[]
+  sinaisVitais      SinaisVitais[]
+  glasgows          Glasgow[]
+  afericoesClinicas AfericaoClinica[]
+  evaDores          EvaDor[]
 
   @@map("cecom.atendimentos")
 }
@@ -504,29 +525,107 @@ model SinaisVitais {
   cdAtendimento Int
   data          DateTime @default(now())
 
-  // Valores fisiológicos principais
-  paSistolica  Int?
-  paDiastolica Int?
-  fc           Int? // frequência cardíaca
-  fr           Int? // frequência respiratória
-  temperatura  Decimal? @db.Decimal
-  spo2         Int? // saturação periférica
-  peso         Decimal? @db.Decimal
-  altura       Decimal? @db.Decimal
+  // Pressão arterial
+  paSistolica  Int? @db.SmallInt
+  paDiastolica Int? @db.SmallInt
 
-  // Cálculos derivados
-  imc Decimal? @db.Decimal // peso / altura²
-  pam Decimal? @db.Decimal // (PAS + 2*PAD) / 3
+  // Frequências
+  fc Int? @db.SmallInt
+  fr Int? @db.SmallInt
 
-  // Classificação clínica automática
-  riscoClinico String? @db.VarChar(20) // "Normal", "Alerta", "Crítico"
+  // Febre
+  temperatura Decimal? @db.Decimal(4, 1)
 
-  // Metadados de coleta
-  metodoColeta  String? @db.VarChar(50) // "Manual", "Oxímetro", "Esfigmo", "IoT"
-  dispositivoId String? @db.VarChar(50) // ID de dispositivos BLE / IoT
-  metadados     Json?
+  // Oxigenação
+  spo2 Int? @db.SmallInt
+
+  // Medidas antropométricas
+  peso   Decimal? @db.Decimal(5, 2)
+  altura Decimal? @db.Decimal(4, 2)
+  imc    Decimal? @db.Decimal(5, 2)
+
+  // Dor
+  dor         Int?       @db.SmallInt
+  escalaDorId Int?
+  escalaDor   EscalaDor? @relation(fields: [escalaDorId], references: [id])
+
+  // Posição do paciente
+  posicao PosicaoPaciente?
+
+  // Origem da aferição
+  origem OrigemAfericao? @default(MANUAL)
+
+  // Informação bruta (logs e integrações)
+  metadataRaw Json?
 
   atendimento Atendimento @relation(fields: [cdAtendimento], references: [id])
 
   @@map("cecom.sinaisvitais")
+}
+
+model EscalaDor {
+  id        Int     @id @default(autoincrement())
+  nome      String  @db.VarChar(100) // Ex: EVA, NIPS, Wong-Baker
+  descricao String? @db.VarChar(300)
+
+  sinaisVitais SinaisVitais[]
+
+  @@map("cecom.escalasdor")
+}
+
+model Glasgow {
+  id             Int      @id @default(autoincrement())
+  cdAtendimento  Int
+  cdProfissional Int?     @map("cdProf")
+  data           DateTime @default(now()) @db.Timestamptz
+
+  // Componentes da ECG
+  ocular Int // 1–4
+  verbal Int // 1–5
+  motora Int // 1–6
+  total  Int // 3–15, calculado pela API, salvo no banco
+
+  observacao String? @db.VarChar(300)
+
+  // Relacionamentos
+  atendimento  Atendimento   @relation(fields: [cdAtendimento], references: [id])
+  profissional Profissional? @relation(fields: [cdProfissional], references: [id])
+
+  @@index([cdAtendimento])
+  @@index([cdProfissional])
+  @@map("cecom.glasgow")
+}
+
+model AfericaoClinica {
+  id             Int      @id @default(autoincrement())
+  cdAtendimento  Int
+  cdProfissional Int?     @map("cdProf")
+  escala         String   @db.VarChar(50) // exemplo: 'GLASGOW', 'EVA', 'BRADEN'
+  idRegistro     Int // id da tabela específica (ex.: id da cecom.glasgow)
+  data           DateTime @default(now()) @db.Timestamptz
+
+  atendimento  Atendimento   @relation(fields: [cdAtendimento], references: [id])
+  profissional Profissional? @relation(fields: [cdProfissional], references: [id])
+
+  @@index([cdAtendimento])
+  @@index([escala])
+  @@map("cecom.afericoesclinicas")
+}
+
+model EvaDor {
+  id             Int      @id @default(autoincrement())
+  cdAtendimento  Int
+  cdProfissional Int?
+  data           DateTime @default(now()) @db.Timestamptz
+
+  valor Int // 0 a 10
+  observacao String? @db.VarChar(300)
+
+  atendimento  Atendimento   @relation(fields: [cdAtendimento], references: [id])
+  profissional Profissional? @relation(fields: [cdProfissional], references: [id])
+
+  @@index([cdAtendimento])
+  @@index([cdProfissional])
+  
+  @@map("cecom.eva")
 }
