@@ -567,3 +567,20 @@ ALTER TABLE cecom.enderecospessoasrelacionadas
     FOREIGN KEY (cdPessoa)
     REFERENCES cecom.pessoasrelacionadas (id)
     ON DELETE CASCADE;
+
+
+
+======== ATENÇÃO:
+Pode (e deve) ser executado sempre que:
+
+	====>>>> npx prisma generate
+
+mudar o schema.prisma
+
+atualizar Prisma
+
+surgir erro estranho de tipos
+
+trocar de máquina
+
+clonar o projeto

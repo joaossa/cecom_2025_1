@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { PacienteController } from "./paciente.controllers";
+import { PacienteController } from "./paciente.controller";
 
 const router = Router();
 const controller = new PacienteController();
 
-router.post("/", controller.criar);
-router.get("/", controller.listar);
+router.post("/", (req, res) => controller.criar(req, res));
+router.get("/", (req, res) => controller.listar(req, res));
 
 export default router;
