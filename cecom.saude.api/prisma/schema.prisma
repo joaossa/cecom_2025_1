@@ -115,7 +115,7 @@ model Profissional {
   evolucoes         Evolucao[]
   glasgows          Glasgow[]
   afericoesClinicas AfericaoClinica[]
-  evaDores          EvaDor[] 
+  evaDores          EvaDor[]
 
   @@map("cecom.profissionais")
 }
@@ -618,7 +618,7 @@ model EvaDor {
   cdProfissional Int?
   data           DateTime @default(now()) @db.Timestamptz
 
-  valor Int // 0 a 10
+  valor      Int // 0 a 10
   observacao String? @db.VarChar(300)
 
   atendimento  Atendimento   @relation(fields: [cdAtendimento], references: [id])
@@ -626,6 +626,5 @@ model EvaDor {
 
   @@index([cdAtendimento])
   @@index([cdProfissional])
-  
   @@map("cecom.eva")
 }

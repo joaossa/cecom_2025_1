@@ -569,11 +569,15 @@ ALTER TABLE cecom.enderecospessoasrelacionadas
     ON DELETE CASCADE;
 
 
+======== ATENÇÃO 1:
+Melhor resultado do migrate:
 
-======== ATENÇÃO:
+	====>>>> npx prisma format
+
+	====>>>> npx prisma migrate dev --name alguma_descricao_do_que_foi_mudado
+
+======== ATENÇÃO 2:
 Pode (e deve) ser executado sempre que:
-
-	====>>>> npx prisma generate
 
 mudar o schema.prisma
 
@@ -584,3 +588,8 @@ surgir erro estranho de tipos
 trocar de máquina
 
 clonar o projeto
+
+	====>>>> npx prisma generate
+
+	====>>>> npm run prisma:generate
+	====>>>> npx prisma@7.1.0 generate
