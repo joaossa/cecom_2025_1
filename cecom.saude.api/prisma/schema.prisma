@@ -61,8 +61,9 @@ model Master {
 
   pacientes     Paciente[]
   profissionais Profissional[]
+  usuarioAuths  UsuarioAuth[]
 
-  @@map("cecom.master")
+  @@map("master")
 }
 
 //-------------------------------------------------------
@@ -92,7 +93,7 @@ model Paciente {
   parentescoPacientes ParentescoPaciente[]
 
   @@id([cdMaster, cdPaciente])
-  @@map("cecom.pacientes")
+  @@map("pacientes")
 }
 
 model Profissional {
@@ -116,8 +117,9 @@ model Profissional {
   glasgows          Glasgow[]
   afericoesClinicas AfericaoClinica[]
   evaDores          EvaDor[]
+  usuarioAuths      UsuarioAuth[]
 
-  @@map("cecom.profissionais")
+  @@map("profissionais")
 }
 
 //-------------------------------------------------------
@@ -141,7 +143,7 @@ model Endereco {
   profissionais              EnderecoProfissional[]
   enderecoPessoaRelacionadas EnderecoPessoaRelacionada[]
 
-  @@map("cecom.enderecos")
+  @@map("enderecos")
 }
 
 model EnderecoPaciente {
@@ -153,7 +155,7 @@ model EnderecoPaciente {
   paciente Paciente @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
   endereco Endereco @relation(fields: [cdEndereco], references: [id])
 
-  @@map("cecom.enderecospacientes")
+  @@map("enderecospacientes")
 }
 
 model EnderecoProfissional {
@@ -164,7 +166,7 @@ model EnderecoProfissional {
   profissional Profissional @relation(fields: [cdProf], references: [id])
   endereco     Endereco     @relation(fields: [cdEndereco], references: [id])
 
-  @@map("cecom.enderecosprofissionais")
+  @@map("enderecosprofissionais")
 }
 
 //-------------------------------------------------------
@@ -187,7 +189,7 @@ model Contato {
   pacientes     ContatoPaciente[]
   profissionais ContatoProfissional[]
 
-  @@map("cecom.contatos")
+  @@map("contatos")
 }
 
 model ContatoPaciente {
@@ -199,7 +201,7 @@ model ContatoPaciente {
   paciente Paciente @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
   contato  Contato  @relation(fields: [cdContato], references: [id])
 
-  @@map("cecom.contatospacientes")
+  @@map("contatospacientes")
 }
 
 model ContatoProfissional {
@@ -210,7 +212,7 @@ model ContatoProfissional {
   profissional Profissional @relation(fields: [cdProf], references: [id])
   contato      Contato      @relation(fields: [cdContato], references: [id])
 
-  @@map("cecom.contatosprofissionais")
+  @@map("contatosprofissionais")
 }
 
 //-------------------------------------------------------
@@ -233,7 +235,7 @@ model Atendimento {
   afericoesClinicas AfericaoClinica[]
   evaDores          EvaDor[]
 
-  @@map("cecom.atendimentos")
+  @@map("atendimentos")
 }
 
 //-------------------------------------------------------
@@ -263,7 +265,7 @@ model Evolucao {
   pacienteCdMaster   Int?
   pacienteCdPaciente Int?
 
-  @@map("cecom.evolucoes")
+  @@map("evolucoes")
 }
 
 enum TipoParentesco {
@@ -289,7 +291,7 @@ model PessoaRelacionada {
   parentescos ParentescoPaciente[]
   enderecos   EnderecoPessoaRelacionada[]
 
-  @@map("cecom.pessoasrelacionadas")
+  @@map("pessoasrelacionadas")
 }
 
 model ParentescoPaciente {
@@ -302,7 +304,7 @@ model ParentescoPaciente {
   paciente          Paciente          @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
   pessoaRelacionada PessoaRelacionada @relation(fields: [cdPessoa], references: [id])
 
-  @@map("cecom.parentescospacientes")
+  @@map("parentescospacientes")
 }
 
 //-------------------------------------------------------
@@ -314,7 +316,7 @@ model Plano {
   descricao String  @db.VarChar(120)
   stInativo SimNao? @map("stInativo")
 
-  @@map("cecom.planos")
+  @@map("planos")
 }
 
 model Motivo {
@@ -322,7 +324,7 @@ model Motivo {
   descricao String  @db.VarChar(200)
   stInativo SimNao? @map("stInativo")
 
-  @@map("cecom.motivos")
+  @@map("motivos")
 }
 
 model TipoProcedimento {
@@ -330,7 +332,7 @@ model TipoProcedimento {
   descricao String  @db.VarChar(120)
   stInativo SimNao? @map("stInativo")
 
-  @@map("cecom.tiposprocedimentos")
+  @@map("tiposprocedimentos")
 }
 
 model TipoEvolucaoSimples {
@@ -338,7 +340,7 @@ model TipoEvolucaoSimples {
   descricao String  @db.VarChar(120)
   stInativo SimNao? @map("stInativo")
 
-  @@map("cecom.tiposevolucaosimples")
+  @@map("tiposevolucaosimples")
 }
 
 //-------------------------------------------------------
@@ -353,7 +355,7 @@ model Pais {
 
   cidades Cidade[]
 
-  @@map("cecom.paises")
+  @@map("paises")
 }
 
 model UnidadeFederacao {
@@ -363,7 +365,7 @@ model UnidadeFederacao {
 
   cidades Cidade[]
 
-  @@map("cecom.unidadesfederacao")
+  @@map("unidadesfederacao")
 }
 
 model Cidade {
@@ -383,7 +385,7 @@ model Cidade {
 
   @@index([cdUf])
   @@index([cdPais])
-  @@map("cecom.cidades")
+  @@map("cidades")
 }
 
 //-------------------------------------------------------
@@ -396,7 +398,7 @@ model Escolaridade {
   stInativo SimNao?    @map("stInativo")
   pacientes Paciente[]
 
-  @@map("cecom.escolaridades")
+  @@map("escolaridades")
 }
 
 model Ocupacao {
@@ -407,7 +409,7 @@ model Ocupacao {
   pacientes     Paciente[]
   profissionals Profissional[]
 
-  @@map("cecom.ocupacoes")
+  @@map("ocupacoes")
 }
 
 //-------------------------------------------------------
@@ -423,7 +425,7 @@ model Distrito {
   cidade  Cidade   @relation(fields: [cdCidade], references: [id])
   bairros Bairro[]
 
-  @@map("cecom.distritos")
+  @@map("distritos")
 }
 
 model Bairro {
@@ -438,7 +440,7 @@ model Bairro {
 
   enderecos Endereco[]
 
-  @@map("cecom.bairros")
+  @@map("bairros")
 }
 
 //-------------------------------------------------------
@@ -453,7 +455,7 @@ model EnderecoPessoaRelacionada {
   pessoaRelacionada PessoaRelacionada @relation(fields: [cdPessoa], references: [id])
   endereco          Endereco          @relation(fields: [cdEndereco], references: [id])
 
-  @@map("cecom.enderecospessoasrelacionadas")
+  @@map("enderecospessoasrelacionadas")
 }
 
 //-------------------------------------------------------
@@ -469,7 +471,7 @@ model Cid {
   evolucaoCids EvolucaoCid[]
 
   @@unique([codigo, versao])
-  @@map("cecom.cid")
+  @@map("cid")
 }
 
 model Dsm {
@@ -481,7 +483,7 @@ model Dsm {
   evolucaoDsms EvolucaoDsm[]
 
   @@unique([codigo, versao])
-  @@map("cecom.dsm")
+  @@map("dsm")
 }
 
 // Tipos modernos de evolução clínica
@@ -491,7 +493,7 @@ model TipoEvolucaoClinica {
   stInativo SimNao?    @map("stInativo")
   evolucaos Evolucao[]
 
-  @@map("cecom.tiposevolucoesclinicas")
+  @@map("tiposevolucoesclinicas")
 }
 
 //-------------------------------------------------------
@@ -506,7 +508,7 @@ model EvolucaoCid {
   evolucao Evolucao @relation(fields: [cdEvolucao], references: [id])
   cid      Cid      @relation(fields: [cdCid], references: [id])
 
-  @@map("cecom.evolucoescid")
+  @@map("evolucoescid")
 }
 
 model EvolucaoDsm {
@@ -517,7 +519,7 @@ model EvolucaoDsm {
   evolucao Evolucao @relation(fields: [cdEvolucao], references: [id])
   dsm      Dsm      @relation(fields: [cdDsm], references: [id])
 
-  @@map("cecom.evolucoesdsm")
+  @@map("evolucoesdsm")
 }
 
 model SinaisVitais {
@@ -560,7 +562,7 @@ model SinaisVitais {
 
   atendimento Atendimento @relation(fields: [cdAtendimento], references: [id])
 
-  @@map("cecom.sinaisvitais")
+  @@map("sinaisvitais")
 }
 
 model EscalaDor {
@@ -570,7 +572,7 @@ model EscalaDor {
 
   sinaisVitais SinaisVitais[]
 
-  @@map("cecom.escalasdor")
+  @@map("escalasdor")
 }
 
 model Glasgow {
@@ -593,7 +595,7 @@ model Glasgow {
 
   @@index([cdAtendimento])
   @@index([cdProfissional])
-  @@map("cecom.glasgow")
+  @@map("glasgow")
 }
 
 model AfericaoClinica {
@@ -609,7 +611,7 @@ model AfericaoClinica {
 
   @@index([cdAtendimento])
   @@index([escala])
-  @@map("cecom.afericoesclinicas")
+  @@map("afericoesclinicas")
 }
 
 model EvaDor {
@@ -626,5 +628,34 @@ model EvaDor {
 
   @@index([cdAtendimento])
   @@index([cdProfissional])
-  @@map("cecom.eva")
+  @@map("eva")
+}
+
+//-------------------------------------------------------
+// MÓDULO 17 — Novo módulo/tabelas mínimas para login
+//-------------------------------------------------------
+
+enum RoleAuth {
+  ADMIN
+  PROFISSIONAL
+  LEITURA
+}
+
+model UsuarioAuth {
+  id             Int       @id @default(autoincrement())
+  cdMaster       Int       @map("cdMaster")
+  email          String    @db.VarChar(120)
+  senhaHash      String    @db.VarChar(200)
+  role           RoleAuth  @default(LEITURA)
+  cdProfissional Int?      @map("cdProfissional")
+  stInativo      SimNao?   @map("stInativo")
+  dtCadastro     DateTime  @default(now()) @db.Timestamptz
+  dtUltLogin     DateTime? @db.Timestamptz
+
+  master       Master        @relation(fields: [cdMaster], references: [id])
+  profissional Profissional? @relation(fields: [cdProfissional], references: [id])
+
+  @@unique([cdMaster, email])
+  @@index([cdMaster])
+  @@map("usuariosauth")
 }
