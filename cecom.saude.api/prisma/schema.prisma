@@ -228,8 +228,9 @@ model Atendimento {
   data           DateTime @db.Timestamptz
   observacao     String?  @db.VarChar(500)
 
-  paciente          Paciente          @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
-  profissional      Profissional      @relation(fields: [cdProfissional], references: [id])
+  paciente     Paciente     @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
+  profissional Profissional @relation(fields: [cdProfissional], references: [id], onDelete: Restrict)
+
   evolucaos         Evolucao[]
   sinaisVitais      SinaisVitais[]
   glasgows          Glasgow[]
@@ -256,15 +257,15 @@ model Evolucao {
   agravamento           Boolean?          @default(false)
   textoEstruturado      Json?
 
-  atendimento         Atendimento          @relation(fields: [cdAtendimento], references: [id])
-  profissional        Profissional         @relation(fields: [cdProfissional], references: [id])
-  tipoEvolucaoClinica TipoEvolucaoClinica? @relation(fields: [tipoEvolucaoClinicaId], references: [id])
+  atendimento  Atendimento  @relation(fields: [cdAtendimento], references: [id])
+  profissional Profissional @relation(fields: [cdProfissional], references: [id], onDelete: Restrict)
 
-  cid                EvolucaoCid[]
-  dsm                EvolucaoDsm[]
-  paciente           Paciente?     @relation(fields: [pacienteCdMaster, pacienteCdPaciente], references: [cdMaster, cdPaciente])
-  pacienteCdMaster   Int?
-  pacienteCdPaciente Int?
+  cid                 EvolucaoCid[]
+  dsm                 EvolucaoDsm[]
+  paciente            Paciente?            @relation(fields: [pacienteCdMaster, pacienteCdPaciente], references: [cdMaster, cdPaciente])
+  pacienteCdMaster    Int?
+  pacienteCdPaciente  Int?
+  tipoEvolucaoClinica TipoEvolucaoClinica? @relation(fields: [tipoEvolucaoClinicaId], references: [id])
 
   @@map("evolucoes")
 }
