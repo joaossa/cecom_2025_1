@@ -9,8 +9,10 @@ export class ProfissionalService {
   async listar() {
     return prisma.profissional.findMany({
       include: {
-        enderecos: true,
-        contatos: true,
+        enderecos: { include: { endereco: true } },
+        contatos: { include: { contato: true } },
+        ocupacao: true, // opcional, mas útil
+        master: true,   // opcional, mas útil
       },
     });
   }
@@ -18,11 +20,8 @@ export class ProfissionalService {
   // ✅ aqui o correto: cdMaster + id do profissional
   async buscarPorId(cdMaster: number, id: number) {
     return prisma.profissional.findFirst({
-      where: { cdMaster, id },
-      include: {
-        enderecos: true,
-        contatos: true,
-      },
+      where: { id, cdMaster },
     });
   }
+  
 }

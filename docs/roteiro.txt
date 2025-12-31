@@ -593,3 +593,9 @@ clonar o projeto
 
 	====>>>> npm run prisma:generate
 	====>>>> npx prisma@7.1.0 generate
+	
+	
+SUBIR ALTERAÇÕES	
+git add ../package.json	
+git commit -m "Correções para executar npm run dev com sucesso..."
+git push --set-upstream origin main
