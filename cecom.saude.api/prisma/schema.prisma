@@ -91,6 +91,7 @@ model Paciente {
   atendimentos        Atendimento[]
   evolucoes           Evolucao[]
   parentescoPacientes ParentescoPaciente[]
+  usuarioAuths        UsuarioAuth[]
 
   @@id([cdMaster, cdPaciente])
   @@map("pacientes")
@@ -642,20 +643,28 @@ enum RoleAuth {
 }
 
 model UsuarioAuth {
-  id             Int       @id @default(autoincrement())
-  cdMaster       Int       @map("cdMaster")
-  email          String    @db.VarChar(120)
-  senhaHash      String    @db.VarChar(200)
-  role           RoleAuth  @default(LEITURA)
-  cdProfissional Int?      @map("cdProfissional")
-  stInativo      SimNao?   @map("stInativo")
-  dtCadastro     DateTime  @default(now()) @db.Timestamptz
-  dtUltLogin     DateTime? @db.Timestamptz
+  id        Int      @id @default(autoincrement()) @db.Integer
+  cdMaster  Int      @map("cdMaster")
+  email     String   @db.VarChar(150)
+  senhaHash String   @db.VarChar(255)
+  role      RoleAuth @default(PROFISSIONAL)
 
-  master       Master        @relation(fields: [cdMaster], references: [id])
-  profissional Profissional? @relation(fields: [cdProfissional], references: [id])
+  // Vínculos opcionais
+  cdProfissional Int? @map("cdProfissional")
+  cdPaciente     Int? @map("cdPaciente")
 
-  @@unique([cdMaster, email])
+  // Relações
+  master Master @relation(fields: [cdMaster], references: [id])
+
+  // se deletar profissional, mantém usuário e limpa vínculo
+  profissional Profissional? @relation(fields: [cdProfissional], references: [id], onDelete: SetNull)
+
+  // Paciente tem PK composta (cdMaster, cdPaciente)
+  // se deletar paciente, mantém usuário e limpa vínculo
+  paciente Paciente? @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente], onDelete: SetNull)
+
+  @@unique([cdMaster, email]) // recomendado p/ evitar colisão entre masters
+  // Índices/uniques recomendados:
   @@index([cdMaster])
   @@map("usuariosauth")
 }
