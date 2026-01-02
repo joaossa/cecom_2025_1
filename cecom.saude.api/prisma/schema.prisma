@@ -1,9 +1,11 @@
 generator client {
   provider = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["cecom"]
 }
 
 //---------------------------------------------
@@ -12,22 +14,26 @@ datasource db {
 enum SimNao {
   S
   N
+  @@schema("cecom")
 }
 
 enum Sexo {
   M
   F
   I
+  @@schema("cecom")
 }
 
 enum VersaoCid {
   c9
   c10
+  @@schema("cecom")
 }
 
 enum VersaoDsm {
   d4
   d5
+  @@schema("cecom")
 }
 
 enum HumorIntensidade {
@@ -36,6 +42,7 @@ enum HumorIntensidade {
   NIVEL_3 @map("3")
   NIVEL_4 @map("4")
   NIVEL_5 @map("5")
+  @@schema("cecom")
 }
 
 enum OrigemAfericao {
@@ -44,6 +51,7 @@ enum OrigemAfericao {
   BALANCA
   RELOGIO_INTELIGENTE
   MONITOR_HOSPITALAR
+  @@schema("cecom")
 }
 
 enum PosicaoPaciente {
@@ -51,6 +59,7 @@ enum PosicaoPaciente {
   DEITADO
   ORTOSTATICO
   EM_PE
+  @@schema("cecom")
 }
 
 model Master {
@@ -64,6 +73,7 @@ model Master {
   usuarioAuths  UsuarioAuth[]
 
   @@map("master")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -95,6 +105,7 @@ model Paciente {
 
   @@id([cdMaster, cdPaciente])
   @@map("pacientes")
+  @@schema("cecom")
 }
 
 model Profissional {
@@ -121,6 +132,7 @@ model Profissional {
   usuarioAuths      UsuarioAuth[]
 
   @@map("profissionais")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -145,6 +157,7 @@ model Endereco {
   enderecoPessoaRelacionadas EnderecoPessoaRelacionada[]
 
   @@map("enderecos")
+  @@schema("cecom")
 }
 
 model EnderecoPaciente {
@@ -157,6 +170,7 @@ model EnderecoPaciente {
   endereco Endereco @relation(fields: [cdEndereco], references: [id])
 
   @@map("enderecospacientes")
+  @@schema("cecom")
 }
 
 model EnderecoProfissional {
@@ -168,6 +182,7 @@ model EnderecoProfissional {
   endereco     Endereco     @relation(fields: [cdEndereco], references: [id])
 
   @@map("enderecosprofissionais")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -179,6 +194,7 @@ enum TipoFone {
   T // Trabalho
   C // Celular
   P // Principal
+  @@schema("cecom")
 }
 
 model Contato {
@@ -191,6 +207,7 @@ model Contato {
   profissionais ContatoProfissional[]
 
   @@map("contatos")
+  @@schema("cecom")
 }
 
 model ContatoPaciente {
@@ -203,6 +220,7 @@ model ContatoPaciente {
   contato  Contato  @relation(fields: [cdContato], references: [id])
 
   @@map("contatospacientes")
+  @@schema("cecom")
 }
 
 model ContatoProfissional {
@@ -214,6 +232,7 @@ model ContatoProfissional {
   contato      Contato      @relation(fields: [cdContato], references: [id])
 
   @@map("contatosprofissionais")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -238,6 +257,7 @@ model Atendimento {
   evaDores          EvaDor[]
 
   @@map("atendimentos")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -265,6 +285,7 @@ model Evolucao {
   tipoEvolucaoClinicaId Int?                 @db.Integer
 
   @@map("evolucoes")
+  @@schema("cecom")
 }
 
 enum TipoParentesco {
@@ -275,6 +296,7 @@ enum TipoParentesco {
   C // Cônjuge
   O // Outro
   R // Próprio paciente
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -291,6 +313,7 @@ model PessoaRelacionada {
   enderecos   EnderecoPessoaRelacionada[]
 
   @@map("pessoasrelacionadas")
+  @@schema("cecom")
 }
 
 model ParentescoPaciente {
@@ -304,6 +327,7 @@ model ParentescoPaciente {
   pessoaRelacionada PessoaRelacionada @relation(fields: [cdPessoa], references: [id])
 
   @@map("parentescospacientes")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -316,6 +340,7 @@ model Plano {
   stInativo SimNao? @map("stInativo")
 
   @@map("planos")
+  @@schema("cecom")
 }
 
 model Motivo {
@@ -324,6 +349,7 @@ model Motivo {
   stInativo SimNao? @map("stInativo")
 
   @@map("motivos")
+  @@schema("cecom")
 }
 
 model TipoProcedimento {
@@ -332,6 +358,7 @@ model TipoProcedimento {
   stInativo SimNao? @map("stInativo")
 
   @@map("tiposprocedimentos")
+  @@schema("cecom")
 }
 
 model TipoEvolucaoSimples {
@@ -340,6 +367,7 @@ model TipoEvolucaoSimples {
   stInativo SimNao? @map("stInativo")
 
   @@map("tiposevolucaosimples")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -355,6 +383,7 @@ model Pais {
   cidades Cidade[]
 
   @@map("paises")
+  @@schema("cecom")
 }
 
 model UnidadeFederacao {
@@ -365,6 +394,7 @@ model UnidadeFederacao {
   cidades Cidade[]
 
   @@map("unidadesfederacao")
+  @@schema("cecom")
 }
 
 model Cidade {
@@ -385,6 +415,7 @@ model Cidade {
   @@index([cdUf])
   @@index([cdPais])
   @@map("cidades")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -398,6 +429,7 @@ model Escolaridade {
   pacientes Paciente[]
 
   @@map("escolaridades")
+  @@schema("cecom")
 }
 
 model Ocupacao {
@@ -409,6 +441,7 @@ model Ocupacao {
   profissionals Profissional[]
 
   @@map("ocupacoes")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -425,6 +458,7 @@ model Distrito {
   bairros Bairro[]
 
   @@map("distritos")
+  @@schema("cecom")
 }
 
 model Bairro {
@@ -440,6 +474,7 @@ model Bairro {
   enderecos Endereco[]
 
   @@map("bairros")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -455,6 +490,7 @@ model EnderecoPessoaRelacionada {
   endereco          Endereco          @relation(fields: [cdEndereco], references: [id])
 
   @@map("enderecospessoasrelacionadas")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -471,6 +507,7 @@ model Cid {
 
   @@unique([codigo, versao])
   @@map("cid")
+  @@schema("cecom")
 }
 
 model Dsm {
@@ -483,6 +520,7 @@ model Dsm {
 
   @@unique([codigo, versao])
   @@map("dsm")
+  @@schema("cecom")
 }
 
 // Tipos modernos de evolução clínica
@@ -493,6 +531,7 @@ model TipoEvolucaoClinica {
   evolucaos Evolucao[]
 
   @@map("tiposevolucoesclinicas")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -508,6 +547,7 @@ model EvolucaoCid {
   cid      Cid      @relation(fields: [cdCid], references: [id])
 
   @@map("evolucoescid")
+  @@schema("cecom")
 }
 
 model EvolucaoDsm {
@@ -519,6 +559,7 @@ model EvolucaoDsm {
   dsm      Dsm      @relation(fields: [cdDsm], references: [id])
 
   @@map("evolucoesdsm")
+  @@schema("cecom")
 }
 
 model SinaisVitais {
@@ -562,6 +603,7 @@ model SinaisVitais {
   atendimento Atendimento @relation(fields: [cdAtendimento], references: [id])
 
   @@map("sinaisvitais")
+  @@schema("cecom")
 }
 
 model EscalaDor {
@@ -572,6 +614,7 @@ model EscalaDor {
   sinaisVitais SinaisVitais[]
 
   @@map("escalasdor")
+  @@schema("cecom")
 }
 
 model Glasgow {
@@ -595,6 +638,7 @@ model Glasgow {
   @@index([cdAtendimento])
   @@index([cdProfissional])
   @@map("glasgow")
+  @@schema("cecom")
 }
 
 model AfericaoClinica {
@@ -611,6 +655,7 @@ model AfericaoClinica {
   @@index([cdAtendimento])
   @@index([escala])
   @@map("afericoesclinicas")
+  @@schema("cecom")
 }
 
 model EvaDor {
@@ -628,6 +673,7 @@ model EvaDor {
   @@index([cdAtendimento])
   @@index([cdProfissional])
   @@map("eva")
+  @@schema("cecom")
 }
 
 //-------------------------------------------------------
@@ -638,6 +684,7 @@ enum RoleAuth {
   ADMIN
   PROFISSIONAL
   LEITURA
+  @@schema("cecom")
 }
 
 model UsuarioAuth {
@@ -659,4 +706,5 @@ model UsuarioAuth {
   @@unique([cdMaster, email])
   @@index([cdMaster])
   @@map("usuariosauth")
+  @@schema("cecom")
 }
