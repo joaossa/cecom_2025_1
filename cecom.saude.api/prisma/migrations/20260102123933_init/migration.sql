@@ -143,16 +143,12 @@ CREATE TABLE "atendimentos" (
 CREATE TABLE "evolucoes" (
     "id" SERIAL NOT NULL,
     "cdAtendimento" INTEGER NOT NULL,
-    "cdProf" INTEGER NOT NULL,
+    "cdProfissional" INTEGER,
     "data" TIMESTAMPTZ NOT NULL,
     "texto" VARCHAR(2000) NOT NULL,
-    "cdTipoEvolucaoClinica" INTEGER,
-    "humor" "HumorIntensidade",
-    "alertaRisco" BOOLEAN DEFAULT false,
-    "agravamento" BOOLEAN DEFAULT false,
-    "textoEstruturado" JSONB,
     "pacienteCdMaster" INTEGER,
     "pacienteCdPaciente" INTEGER,
+    "tipoEvolucaoClinicaId" INTEGER,
 
     CONSTRAINT "evolucoes_pkey" PRIMARY KEY ("id")
 );
@@ -419,13 +415,11 @@ CREATE TABLE "eva" (
 CREATE TABLE "usuariosauth" (
     "id" SERIAL NOT NULL,
     "cdMaster" INTEGER NOT NULL,
-    "email" VARCHAR(120) NOT NULL,
-    "senhaHash" VARCHAR(200) NOT NULL,
-    "role" "RoleAuth" NOT NULL DEFAULT 'LEITURA',
+    "email" VARCHAR(150) NOT NULL,
+    "senhaHash" VARCHAR(255) NOT NULL,
+    "role" "RoleAuth" NOT NULL DEFAULT 'PROFISSIONAL',
     "cdProfissional" INTEGER,
-    "stInativo" "SimNao",
-    "dtCadastro" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "dtUltLogin" TIMESTAMPTZ,
+    "cdPaciente" INTEGER,
 
     CONSTRAINT "usuariosauth_pkey" PRIMARY KEY ("id")
 );
@@ -512,22 +506,22 @@ ALTER TABLE "contatosprofissionais" ADD CONSTRAINT "contatosprofissionais_cdProf
 ALTER TABLE "contatosprofissionais" ADD CONSTRAINT "contatosprofissionais_cdContato_fkey" FOREIGN KEY ("cdContato") REFERENCES "contatos"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "atendimentos" ADD CONSTRAINT "atendimentos_cdMaster_cdPaciente_fkey" FOREIGN KEY ("cdMaster", "cdPaciente") REFERENCES "pacientes"("cdMaster", "cdPaciente") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "atendimentos" ADD CONSTRAINT "atendimentos_cdMaster_cdPaciente_fkey" FOREIGN KEY ("cdMaster", "cdPaciente") REFERENCES "pacientes"("cdMaster", "cdPaciente") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "atendimentos" ADD CONSTRAINT "atendimentos_cdProf_fkey" FOREIGN KEY ("cdProf") REFERENCES "profissionais"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "evolucoes" ADD CONSTRAINT "evolucoes_cdAtendimento_fkey" FOREIGN KEY ("cdAtendimento") REFERENCES "atendimentos"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "evolucoes" ADD CONSTRAINT "evolucoes_cdAtendimento_fkey" FOREIGN KEY ("cdAtendimento") REFERENCES "atendimentos"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "evolucoes" ADD CONSTRAINT "evolucoes_cdProf_fkey" FOREIGN KEY ("cdProf") REFERENCES "profissionais"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "evolucoes" ADD CONSTRAINT "evolucoes_cdTipoEvolucaoClinica_fkey" FOREIGN KEY ("cdTipoEvolucaoClinica") REFERENCES "tiposevolucoesclinicas"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "evolucoes" ADD CONSTRAINT "evolucoes_cdProfissional_fkey" FOREIGN KEY ("cdProfissional") REFERENCES "profissionais"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "evolucoes" ADD CONSTRAINT "evolucoes_pacienteCdMaster_pacienteCdPaciente_fkey" FOREIGN KEY ("pacienteCdMaster", "pacienteCdPaciente") REFERENCES "pacientes"("cdMaster", "cdPaciente") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "evolucoes" ADD CONSTRAINT "evolucoes_tipoEvolucaoClinicaId_fkey" FOREIGN KEY ("tipoEvolucaoClinicaId") REFERENCES "tiposevolucoesclinicas"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "parentescospacientes" ADD CONSTRAINT "parentescospacientes_cdMaster_cdPaciente_fkey" FOREIGN KEY ("cdMaster", "cdPaciente") REFERENCES "pacientes"("cdMaster", "cdPaciente") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -597,3 +591,6 @@ ALTER TABLE "usuariosauth" ADD CONSTRAINT "usuariosauth_cdMaster_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "usuariosauth" ADD CONSTRAINT "usuariosauth_cdProfissional_fkey" FOREIGN KEY ("cdProfissional") REFERENCES "profissionais"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "usuariosauth" ADD CONSTRAINT "usuariosauth_cdMaster_cdPaciente_fkey" FOREIGN KEY ("cdMaster", "cdPaciente") REFERENCES "pacientes"("cdMaster", "cdPaciente") ON DELETE SET NULL ON UPDATE CASCADE;

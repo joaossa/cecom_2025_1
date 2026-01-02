@@ -221,17 +221,17 @@ model ContatoProfissional {
 //-------------------------------------------------------
 
 model Atendimento {
-  id             Int      @id @default(autoincrement()) @db.Integer
+  id             Int      @id @default(autoincrement())
   cdMaster       Int
   cdPaciente     Int
   cdProfissional Int      @map("cdProf")
   data           DateTime @db.Timestamptz
   observacao     String?  @db.VarChar(500)
 
-  paciente     Paciente     @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
+  paciente     Paciente     @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente], onDelete: Cascade)
   profissional Profissional @relation(fields: [cdProfissional], references: [id], onDelete: Restrict)
 
-  evolucaos         Evolucao[]
+  evolucoes         Evolucao[]
   sinaisVitais      SinaisVitais[]
   glasgows          Glasgow[]
   afericoesClinicas AfericaoClinica[]
@@ -245,27 +245,24 @@ model Atendimento {
 //-------------------------------------------------------
 
 model Evolucao {
-  id             Int      @id @default(autoincrement()) @db.Integer
-  cdAtendimento  Int      @map("cdAtendimento")
-  cdProfissional Int      @map("cdProf")
+  id             Int      @id @default(autoincrement())
+  cdAtendimento  Int
+  cdProfissional Int?
   data           DateTime @db.Timestamptz
   texto          String   @db.VarChar(2000)
 
-  tipoEvolucaoClinicaId Int?              @map("cdTipoEvolucaoClinica")
-  humor                 HumorIntensidade?
-  alertaRisco           Boolean?          @default(false)
-  agravamento           Boolean?          @default(false)
-  textoEstruturado      Json?
+  atendimento  Atendimento   @relation(fields: [cdAtendimento], references: [id], onDelete: Cascade)
+  profissional Profissional? @relation(fields: [cdProfissional], references: [id], onDelete: SetNull)
 
-  atendimento  Atendimento  @relation(fields: [cdAtendimento], references: [id])
-  profissional Profissional @relation(fields: [cdProfissional], references: [id], onDelete: Restrict)
+  pacienteCdMaster   Int?
+  pacienteCdPaciente Int?
 
-  cid                 EvolucaoCid[]
-  dsm                 EvolucaoDsm[]
-  paciente            Paciente?            @relation(fields: [pacienteCdMaster, pacienteCdPaciente], references: [cdMaster, cdPaciente])
-  pacienteCdMaster    Int?
-  pacienteCdPaciente  Int?
-  tipoEvolucaoClinica TipoEvolucaoClinica? @relation(fields: [tipoEvolucaoClinicaId], references: [id])
+  paciente Paciente? @relation(fields: [pacienteCdMaster, pacienteCdPaciente], references: [cdMaster, cdPaciente], onDelete: SetNull)
+
+  cid                   EvolucaoCid[]
+  dsm                   EvolucaoDsm[]
+  tipoEvolucaoClinica   TipoEvolucaoClinica? @relation(fields: [tipoEvolucaoClinicaId], references: [id])
+  tipoEvolucaoClinicaId Int?                 @db.Integer
 
   @@map("evolucoes")
 }
@@ -644,28 +641,22 @@ enum RoleAuth {
 }
 
 model UsuarioAuth {
-  id        Int      @id @default(autoincrement()) @db.Integer
-  cdMaster  Int      @map("cdMaster")
+  id        Int      @id @default(autoincrement())
+  cdMaster  Int
   email     String   @db.VarChar(150)
   senhaHash String   @db.VarChar(255)
   role      RoleAuth @default(PROFISSIONAL)
 
-  // Vínculos opcionais
-  cdProfissional Int? @map("cdProfissional")
-  cdPaciente     Int? @map("cdPaciente")
+  cdProfissional Int?
+  cdPaciente     Int?
 
-  // Relações
+  // 🔗 relações
   master Master @relation(fields: [cdMaster], references: [id])
 
-  // se deletar profissional, mantém usuário e limpa vínculo
   profissional Profissional? @relation(fields: [cdProfissional], references: [id], onDelete: SetNull)
+  paciente     Paciente?     @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente], onDelete: SetNull)
 
-  // Paciente tem PK composta (cdMaster, cdPaciente)
-  // se deletar paciente, mantém usuário e limpa vínculo
-  paciente Paciente? @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente], onDelete: SetNull)
-
-  @@unique([cdMaster, email]) // recomendado p/ evitar colisão entre masters
-  // Índices/uniques recomendados:
+  @@unique([cdMaster, email])
   @@index([cdMaster])
   @@map("usuariosauth")
 }
