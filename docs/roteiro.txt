@@ -600,7 +600,27 @@ git add ../package.json
 git commit -m "Correções para executar npm run dev com sucesso..."
 git push --set-upstream origin main
 
+----- ZERAR BANCO E COMEÇAR NOVAMENTE
 
+Passos (A):
+
+	Faça backup do schema.prisma atual.
+
+	Apague a pasta:
+
+	prisma/migrations/
+
+	Garanta que seu DATABASE_URL está correto (com ?schema=cecom) e que os @@map() não têm cecom. embutido.
+
+	Rode:
+
+	npx prisma migrate reset
+
+
+	Crie uma migration inicial única (tudo de uma vez):
+
+	npx prisma migrate dev --name init
+	npx prisma@7.1.0 generate
 
 
 
