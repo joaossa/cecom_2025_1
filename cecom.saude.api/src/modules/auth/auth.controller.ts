@@ -8,6 +8,7 @@ const service = new AuthService();
 export class AuthController {
   async login(req: Request, res: Response) {
     const parsed = LoginDTO.safeParse(req.body);
+    
     if (!parsed.success) {
       return res.status(400).json({
         message: "Dados inválidos",
@@ -20,6 +21,7 @@ export class AuthController {
         parsed.data.email,
         parsed.data.senha
       );
+      
       return res.json(result);
     } catch {
       return res.status(401).json({ message: "Login inválido" });
