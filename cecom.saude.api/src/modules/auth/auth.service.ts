@@ -19,7 +19,7 @@ export class AuthService {
 
     const token = jwt.sign(
       {
-        sub: usuario.id,
+        sub: usuario.id.toString(),
         role: usuario.role,
         cdMaster: usuario.cdMaster,
       },

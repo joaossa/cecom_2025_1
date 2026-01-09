@@ -3,6 +3,7 @@ import cors from "cors";
 import authRouter from "./modules/auth/auth.router";
 import pacienteRouter from "./modules/pacientes/paciente.router";
 import profissionalRouter from "./modules/profissionais/profissional.router";
+import { authMiddleware } from "./modules/auth/auth.middleware";
 // import atendimentoRouter from "./modules/atendimentos/atendimento.router";
 // import sinaisRouter from "./modules/sinais/sinais.router";
 // import escalasRouter from "./modules/escalas/glasgow.router";
@@ -28,6 +29,13 @@ app.use("/profissionais", profissionalRouter);
 // healthcheck
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
+});
+
+app.get("/protected", authMiddleware, (req, res) => {
+  return res.json({
+    message: "Acesso autorizado",
+    user: req.user,
+  });
 });
 
 export default app;
