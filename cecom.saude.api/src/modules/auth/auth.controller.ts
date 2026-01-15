@@ -27,4 +27,17 @@ export class AuthController {
       return res.status(401).json({ message: "Login inválido" });
     }
   }
+
+  // 🧩 ENDPOINT ME
+  async me(req: Request, res: Response) {
+    if (!req.user) {
+      return res.status(401).json({ message: "Não autenticado" });
+    }
+
+    return res.json({
+      id: req.user.id,
+      role: req.user.role,
+      cdMaster: req.user.cdMaster,
+    });
+  }  
 }
