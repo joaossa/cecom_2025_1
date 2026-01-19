@@ -628,3 +628,8 @@ npx prisma db seed
 
 
 
+---- Serviços....
+npm install axios
+
+'React' refere-se a uma UMD global, mas o arquivo atual é um módulo. Considere adicionar uma importação.ts(2686)
+(property) React.Context<AuthContextData>.Provider: React.Provider<AuthContextData>
