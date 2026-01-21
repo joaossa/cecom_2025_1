@@ -13,31 +13,45 @@ async function main() {
     },
   });
 
-  // 2️⃣ Agora sim, o usuário
-  const email = "admin@cecom.local";
+  const senhaPadrao = await bcrypt.hash("admin123", 10);
 
-  const exists = await prisma.usuarioAuth.findUnique({
-    where: {
-      cdMaster_email: {
-        cdMaster: master.id,
-        email,
-      },
+  // 2️⃣ Lista de usuários que devem existir
+  const usuarios = [
+    {
+      email: "admin@cecom.local",
+      role: "ADMIN" as const,
     },
-  });
+    {
+      email: "leitura@cecom.local",
+      role: "LEITURA" as const,
+    },
+  ];
 
-  if (!exists) {
-    await prisma.usuarioAuth.create({
-      data: {
-        cdMaster: master.id,
-        email,
-        senhaHash: await bcrypt.hash("admin123", 10),
-        role: "ADMIN",
+  // 3️⃣ Criação idempotente dos usuários
+  for (const usuario of usuarios) {
+    const exists = await prisma.usuarioAuth.findUnique({
+      where: {
+        cdMaster_email: {
+          cdMaster: master.id,
+          email: usuario.email,
+        },
       },
     });
 
-    console.log("✔ Usuário admin criado");
-  } else {
-    console.log("ℹ Usuário admin já existe");
+    if (!exists) {
+      await prisma.usuarioAuth.create({
+        data: {
+          cdMaster: master.id,
+          email: usuario.email,
+          senhaHash: senhaPadrao,
+          role: usuario.role,
+        },
+      });
+
+      console.log(`✔ Usuário ${usuario.email} criado (${usuario.role})`);
+    } else {
+      console.log(`ℹ Usuário ${usuario.email} já existe`);
+    }
   }
 }
 

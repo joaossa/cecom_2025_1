@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "binary"
 }
 
@@ -8,12 +8,19 @@ datasource db {
   schemas  = ["cecom"]
 }
 
+//--- datasource db {
+//---   provider = "postgresql"
+//---   url      = env("DATABASE_URL")
+//---   schemas  = ["cecom"]
+//--- }
+
 //---------------------------------------------
 // ENUMS GLOBAIS — derivados das constraints S/N e outras
 //---------------------------------------------
 enum SimNao {
   S
   N
+
   @@schema("cecom")
 }
 
@@ -21,18 +28,21 @@ enum Sexo {
   M
   F
   I
+
   @@schema("cecom")
 }
 
 enum VersaoCid {
   c9
   c10
+
   @@schema("cecom")
 }
 
 enum VersaoDsm {
   d4
   d5
+
   @@schema("cecom")
 }
 
@@ -42,6 +52,7 @@ enum HumorIntensidade {
   NIVEL_3 @map("3")
   NIVEL_4 @map("4")
   NIVEL_5 @map("5")
+
   @@schema("cecom")
 }
 
@@ -51,6 +62,7 @@ enum OrigemAfericao {
   BALANCA
   RELOGIO_INTELIGENTE
   MONITOR_HOSPITALAR
+
   @@schema("cecom")
 }
 
@@ -59,6 +71,7 @@ enum PosicaoPaciente {
   DEITADO
   ORTOSTATICO
   EM_PE
+
   @@schema("cecom")
 }
 
@@ -194,6 +207,7 @@ enum TipoFone {
   T // Trabalho
   C // Celular
   P // Principal
+
   @@schema("cecom")
 }
 
@@ -296,6 +310,7 @@ enum TipoParentesco {
   C // Cônjuge
   O // Outro
   R // Próprio paciente
+
   @@schema("cecom")
 }
 
@@ -684,6 +699,7 @@ enum RoleAuth {
   ADMIN
   PROFISSIONAL
   LEITURA
+
   @@schema("cecom")
 }
 

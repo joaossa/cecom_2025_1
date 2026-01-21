@@ -626,6 +626,95 @@ Passos (A):
 npx prisma migrate dev
 npx prisma db seed
 
+---====== # NEON
+	DATABASE_URL="postgresql://neondb_owner:npg_OWrK9a7iuNIp@ep-purple-grass-accsrtnk.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+	datasource db {
+	  provider = "postgresql"
+	  url      = env("DATABASE_URL")
+	  schemas  = ["cecom"]
+	}
+
+	npx prisma migrate resolve --applied 20260119212310_init
+	Loaded Prisma config from prisma.config.ts.
+
+	Prisma schema loaded from prisma\schema.prisma
+	Datasource "db": PostgreSQL database "neondb", schemas "cecom" at "ep-purple-grass-accsrtnk.sa-east-1.aws.neon.tech"
+
+	Migration 20260119212310_init marked as applied.
+
+##### npx prisma migrate deploy
+	(base) PS F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api> npx prisma migrate deploy
+	Loaded Prisma config from prisma.config.ts.
+
+	Prisma schema loaded from prisma\schema.prisma
+	Datasource "db": PostgreSQL database "neondb", schemas "cecom" at "ep-purple-grass-accsrtnk.sa-east-1.aws.neon.tech"
+
+	1 migration found in prisma/migrations
+
+
+	No pending migrations to apply.
+	(base) PS F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api>
+
+
+########### POSTGRES / PRISMA / NEON 
+
+🟢 ROTEIRO A — LOCAL É A FONTE (RECOMENDADO)
+
+PASSO 1 — LOCAL (Postgres local) - ZERAR O BANCO
+
+	npx prisma migrate reset
+	npx prisma migrate dev --name init
+	XXX npx prisma generate
+	npx prisma@7.1.0 generate
+	---- EXECUTAR O SEED
+	npx prisma migrate dev
+	npx prisma db seed
+
+PASSO 2 — NEON (RESET CONTROLADO)
+
+	DROP SCHEMA IF EXISTS cecom CASCADE;
+	CREATE SCHEMA cecom;
+
+PASSO 3 — GARANTIR CONFIGURAÇÃO LIMPA
+
+	DATABASE_URL="postgresql://.../neondb?sslmode=require&options=-c search_path=cecom"
+
+	datasource db {
+	  provider = "postgresql"
+	  url      = env("DATABASE_URL")
+	  schemas  = ["cecom"]
+	}
+
+PASSO 4 — DEPLOY DAS MIGRATIONS
+
+	npx prisma migrate deploy
+
+
+PASSO 5 — SEED
+
+	npx prisma db seed
+
+
+🟡 ROTEIRO B — NEON É A FONTE (DB-FIRST)
+
+PASSO 1 — APONTAR PARA NEON
+
+	npx prisma db pull
+
+PASSO 2 — GERAR CLIENT
+
+	npx prisma@7.1.0 generate
+
+PASSO 3 — CONGELAR MIGRATIONS
+
+🚨 O QUE NÃO FAZER (NUNCA MAIS)
+
+❌ migrate resolve sem entender
+❌ _prisma_migrations em public com schema alvo cecom
+❌ Misturar db pull com migrate dev
+❌ Alterar migrations antigas já aplicadas
+❌ Usar Neon como “dev” com reset frequente
+
 
 
 ---- Serviços....
@@ -633,3 +722,24 @@ npm install axios
 
 'React' refere-se a uma UMD global, mas o arquivo atual é um módulo. Considere adicionar uma importação.ts(2686)
 (property) React.Context<AuthContextData>.Provider: React.Provider<AuthContextData>
+
+
+
+
+------------
+
+INSERT INTO cecom.usuariosauth
+("cdMaster", email, "senhaHash", role)
+VALUES
+(1, 'leitura@cecom.local', 'QWER', 'LEITURA');
+
+
+
+--------------
+
+Como gerar a JWT_SECRET corretamente (forma recomendada)
+✔️ Opção 1 — Node.js (RECOMENDADA)
+
+No terminal:
+
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
