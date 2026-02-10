@@ -1,19 +1,20 @@
 import "dotenv/config";
 import app from "./app";
-import prisma from "./config/prisma";
-
-const PORT = Number(process.env.PORT ?? 3000);
+import { prisma } from "./db/prisma";
 
 async function bootstrap() {
-  await prisma.$connect();
-  console.log("Prisma conectado com sucesso.");
+  try {
+    await prisma.$connect();
+    console.log("✅ Prisma conectado");
 
-  app.listen(PORT, () => {
-    console.log(`🚀 API CECOM rodando na porta ${PORT}`);
-  });
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+      console.log(`🚀 API rodando na porta ${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Falha ao iniciar a API:", error);
+    process.exit(1);
+  }
 }
 
-bootstrap().catch((err) => {
-  console.error("Falha ao iniciar a API:", err);
-  process.exit(1);
-});
+bootstrap();

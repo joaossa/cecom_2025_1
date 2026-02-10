@@ -1,441 +1,290 @@
 generator client {
-  provider   = "prisma-client-js"
-  engineType = "binary"
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["cecom"]
 }
 
-//--- datasource db {
-//---   provider = "postgresql"
-//---   url      = env("DATABASE_URL")
-//---   schemas  = ["cecom"]
-//--- }
-
-//---------------------------------------------
-// ENUMS GLOBAIS — derivados das constraints S/N e outras
-//---------------------------------------------
-enum SimNao {
-  S
-  N
-
-  @@schema("cecom")
-}
-
-enum Sexo {
-  M
-  F
-  I
-
-  @@schema("cecom")
-}
-
-enum VersaoCid {
-  c9
-  c10
-
-  @@schema("cecom")
-}
-
-enum VersaoDsm {
-  d4
-  d5
-
-  @@schema("cecom")
-}
-
-enum HumorIntensidade {
-  NIVEL_1 @map("1")
-  NIVEL_2 @map("2")
-  NIVEL_3 @map("3")
-  NIVEL_4 @map("4")
-  NIVEL_5 @map("5")
-
-  @@schema("cecom")
-}
-
-enum OrigemAfericao {
-  MANUAL
-  OXIMETRO
-  BALANCA
-  RELOGIO_INTELIGENTE
-  MONITOR_HOSPITALAR
-
-  @@schema("cecom")
-}
-
-enum PosicaoPaciente {
-  SENTADO
-  DEITADO
-  ORTOSTATICO
-  EM_PE
-
-  @@schema("cecom")
-}
 
 model Master {
-  id         Int      @id @default(autoincrement()) @map("codigo") @db.Integer
-  nome       String   @map("nome") @db.VarChar(120)
-  dtCadastro DateTime @default(now()) @map("dtCadastro") @db.Timestamptz
-  stInativo  SimNao?  @map("stInativo")
-
+  id            Int            @id @default(autoincrement()) @map("codigo")
+  nome          String         @map("nome") @db.VarChar(120)
+  dtCadastro    DateTime       @default(now()) @map("dtCadastro") @db.Timestamptz(6)
+  stInativo     SimNao?        @map("stInativo")
   pacientes     Paciente[]
   profissionais Profissional[]
   usuarioAuths  UsuarioAuth[]
 
   @@map("master")
-  @@schema("cecom")
+  
 }
 
-//-------------------------------------------------------
-// MÓDULO 2 — MODELOS MVP (Simples e sem dependências)
-//-------------------------------------------------------
-
 model Paciente {
-  cdMaster   Int
-  cdPaciente Int
-
-  nome         String    @db.VarChar(120)
-  sexo         Sexo?     @map("sexo")
-  dtNascimento DateTime? @map("dtNascimento") @db.Date
-  stInativo    SimNao?   @map("stInativo")
-
-  cdEscolaridade Int? @map("cdEscolaridade")
-  cdOcupacao     Int? @map("cdOcupacao")
-
-  escolaridade Escolaridade? @relation(fields: [cdEscolaridade], references: [id])
-  ocupacao     Ocupacao?     @relation(fields: [cdOcupacao], references: [id])
-
-  master              Master               @relation(fields: [cdMaster], references: [id])
-  enderecos           EnderecoPaciente[]
-  contatos            ContatoPaciente[]
+  cdMaster            Int
+  cdPaciente          Int
+  nome                String               @db.VarChar(120)
+  sexo                Sexo?                @map("sexo")
+  dtNascimento        DateTime?            @map("dtNascimento") @db.Date
+  stInativo           SimNao?              @map("stInativo")
+  cdEscolaridade      Int?                 @map("cdEscolaridade")
+  cdOcupacao          Int?                 @map("cdOcupacao")
   atendimentos        Atendimento[]
+  contatos            ContatoPaciente[]
+  enderecos           EnderecoPaciente[]
   evolucoes           Evolucao[]
+  escolaridade        Escolaridade?        @relation(fields: [cdEscolaridade], references: [id])
+  master              Master               @relation(fields: [cdMaster], references: [id])
+  ocupacao            Ocupacao?            @relation(fields: [cdOcupacao], references: [id])
   parentescoPacientes ParentescoPaciente[]
   usuarioAuths        UsuarioAuth[]
 
   @@id([cdMaster, cdPaciente])
   @@map("pacientes")
-  @@schema("cecom")
+  
 }
 
 model Profissional {
-  id       Int @id @default(autoincrement()) @db.Integer
-  cdMaster Int @map("cdMaster")
-
-  nome      String  @db.VarChar(120)
-  sexo      Sexo?   @map("sexo")
-  conselho  String? @map("conselho") @db.VarChar(30)
-  stInativo SimNao? @map("stInativo")
-
-  cdOcupacao Int?      @map("cdOcupacao")
-  ocupacao   Ocupacao? @relation(fields: [cdOcupacao], references: [id])
-
-  master Master @relation(fields: [cdMaster], references: [id])
-
-  enderecos         EnderecoProfissional[]
-  contatos          ContatoProfissional[]
+  id                Int                    @id @default(autoincrement())
+  cdMaster          Int                    @map("cdMaster")
+  nome              String                 @db.VarChar(120)
+  sexo              Sexo?                  @map("sexo")
+  conselho          String?                @map("conselho") @db.VarChar(30)
+  stInativo         SimNao?                @map("stInativo")
+  cdOcupacao        Int?                   @map("cdOcupacao")
+  afericoesClinicas AfericaoClinica[]
   atendimentos      Atendimento[]
+  contatos          ContatoProfissional[]
+  enderecos         EnderecoProfissional[]
+  evaDores          EvaDor[]
   evolucoes         Evolucao[]
   glasgows          Glasgow[]
-  afericoesClinicas AfericaoClinica[]
-  evaDores          EvaDor[]
+  master            Master                 @relation(fields: [cdMaster], references: [id])
+  ocupacao          Ocupacao?              @relation(fields: [cdOcupacao], references: [id])
   usuarioAuths      UsuarioAuth[]
 
   @@map("profissionais")
-  @@schema("cecom")
+  
 }
 
-//-------------------------------------------------------
-// MÓDULO 3 — ENDEREÇOS (MVP sem dependências externas)
-//-------------------------------------------------------
-
 model Endereco {
-  id          Int     @id @default(autoincrement()) @db.Integer
-  logradouro  String  @db.VarChar(120)
-  numero      String? @db.VarChar(10)
-  complemento String? @db.VarChar(50)
-  cdBairro    Int
-  cdCidade    Int
-  cep         String  @db.VarChar(9)
-  stInativo   SimNao? @map("stInativo")
-
-  cidade Cidade @relation(fields: [cdCidade], references: [id])
-  bairro Bairro @relation(fields: [cdBairro], references: [id])
-
+  id                         Int                         @id @default(autoincrement())
+  logradouro                 String                      @db.VarChar(120)
+  numero                     String?                     @db.VarChar(10)
+  complemento                String?                     @db.VarChar(50)
+  cdBairro                   Int
+  cdCidade                   Int
+  cep                        String                      @db.VarChar(9)
+  stInativo                  SimNao?                     @map("stInativo")
+  bairro                     Bairro                      @relation(fields: [cdBairro], references: [id])
+  cidade                     Cidade                      @relation(fields: [cdCidade], references: [id])
   pacientes                  EnderecoPaciente[]
-  profissionais              EnderecoProfissional[]
   enderecoPessoaRelacionadas EnderecoPessoaRelacionada[]
+  profissionais              EnderecoProfissional[]
 
   @@map("enderecos")
-  @@schema("cecom")
+  
 }
 
 model EnderecoPaciente {
-  id         Int @id @default(autoincrement()) @db.Integer
+  id         Int      @id @default(autoincrement())
   cdMaster   Int
   cdPaciente Int
   cdEndereco Int
-
-  paciente Paciente @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
-  endereco Endereco @relation(fields: [cdEndereco], references: [id])
+  endereco   Endereco @relation(fields: [cdEndereco], references: [id])
+  paciente   Paciente @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
 
   @@map("enderecospacientes")
-  @@schema("cecom")
+  
 }
 
 model EnderecoProfissional {
-  id         Int @id @default(autoincrement()) @db.Integer
-  cdProf     Int
-  cdEndereco Int
-
-  profissional Profissional @relation(fields: [cdProf], references: [id])
+  id           Int          @id @default(autoincrement())
+  cdProf       Int
+  cdEndereco   Int
   endereco     Endereco     @relation(fields: [cdEndereco], references: [id])
+  profissional Profissional @relation(fields: [cdProf], references: [id])
 
   @@map("enderecosprofissionais")
-  @@schema("cecom")
-}
-
-//-------------------------------------------------------
-// MÓDULO 4 — CONTATOS (MVP sem dependências externas)
-//-------------------------------------------------------
-
-enum TipoFone {
-  R // Residencial
-  T // Trabalho
-  C // Celular
-  P // Principal
-
-  @@schema("cecom")
+  
 }
 
 model Contato {
-  id        Int      @id @default(autoincrement()) @db.Integer
-  tipo      TipoFone @map("tpTelefone")
-  numero    String   @db.VarChar(20)
-  stInativo SimNao?  @map("stInativo")
-
+  id            Int                   @id @default(autoincrement())
+  tipo          TipoFone              @map("tpTelefone")
+  numero        String                @db.VarChar(20)
+  stInativo     SimNao?               @map("stInativo")
   pacientes     ContatoPaciente[]
   profissionais ContatoProfissional[]
 
   @@map("contatos")
-  @@schema("cecom")
+  
 }
 
 model ContatoPaciente {
-  id         Int @id @default(autoincrement()) @db.Integer
+  id         Int      @id @default(autoincrement())
   cdMaster   Int
   cdPaciente Int
   cdContato  Int
-
-  paciente Paciente @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
-  contato  Contato  @relation(fields: [cdContato], references: [id])
+  contato    Contato  @relation(fields: [cdContato], references: [id])
+  paciente   Paciente @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
 
   @@map("contatospacientes")
-  @@schema("cecom")
+  
 }
 
 model ContatoProfissional {
-  id        Int @id @default(autoincrement()) @db.Integer
-  cdProf    Int
-  cdContato Int
-
-  profissional Profissional @relation(fields: [cdProf], references: [id])
+  id           Int          @id @default(autoincrement())
+  cdProf       Int
+  cdContato    Int
   contato      Contato      @relation(fields: [cdContato], references: [id])
+  profissional Profissional @relation(fields: [cdProf], references: [id])
 
   @@map("contatosprofissionais")
-  @@schema("cecom")
+  
 }
-
-//-------------------------------------------------------
-// MÓDULO 5 — ATENDIMENTO (MVP sem dependências externas)
-//-------------------------------------------------------
 
 model Atendimento {
-  id             Int      @id @default(autoincrement())
-  cdMaster       Int
-  cdPaciente     Int
-  cdProfissional Int      @map("cdProf")
-  data           DateTime @db.Timestamptz
-  observacao     String?  @db.VarChar(500)
-
-  paciente     Paciente     @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente], onDelete: Cascade)
-  profissional Profissional @relation(fields: [cdProfissional], references: [id], onDelete: Restrict)
-
-  evolucoes         Evolucao[]
-  sinaisVitais      SinaisVitais[]
-  glasgows          Glasgow[]
+  id                Int               @id @default(autoincrement())
+  cdMaster          Int
+  cdPaciente        Int
+  cdProfissional    Int               @map("cdProf")
+  data              DateTime          @db.Timestamptz(6)
+  observacao        String?           @db.VarChar(500)
   afericoesClinicas AfericaoClinica[]
+  paciente          Paciente          @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente], onDelete: Cascade)
+  profissional      Profissional      @relation(fields: [cdProfissional], references: [id])
   evaDores          EvaDor[]
+  evolucoes         Evolucao[]
+  glasgows          Glasgow[]
+  sinaisVitais      SinaisVitais[]
 
   @@map("atendimentos")
-  @@schema("cecom")
+  
 }
-
-//-------------------------------------------------------
-// MÓDULO 6 — EVOLUÇÃO CLÍNICA (MVP)
-//-------------------------------------------------------
 
 model Evolucao {
-  id             Int      @id @default(autoincrement())
-  cdAtendimento  Int
-  cdProfissional Int?
-  data           DateTime @db.Timestamptz
-  texto          String   @db.VarChar(2000)
-
-  atendimento  Atendimento   @relation(fields: [cdAtendimento], references: [id], onDelete: Cascade)
-  profissional Profissional? @relation(fields: [cdProfissional], references: [id], onDelete: SetNull)
-
-  pacienteCdMaster   Int?
-  pacienteCdPaciente Int?
-
-  paciente Paciente? @relation(fields: [pacienteCdMaster, pacienteCdPaciente], references: [cdMaster, cdPaciente], onDelete: SetNull)
-
+  id                    Int                  @id @default(autoincrement())
+  cdAtendimento         Int
+  cdProfissional        Int?
+  data                  DateTime             @db.Timestamptz(6)
+  texto                 String               @db.VarChar(2000)
+  pacienteCdMaster      Int?
+  pacienteCdPaciente    Int?
+  tipoEvolucaoClinicaId Int?
+  atendimento           Atendimento          @relation(fields: [cdAtendimento], references: [id], onDelete: Cascade)
+  profissional          Profissional?        @relation(fields: [cdProfissional], references: [id])
+  paciente              Paciente?            @relation(fields: [pacienteCdMaster, pacienteCdPaciente], references: [cdMaster, cdPaciente])
+  tipoEvolucaoClinica   TipoEvolucaoClinica? @relation(fields: [tipoEvolucaoClinicaId], references: [id])
   cid                   EvolucaoCid[]
   dsm                   EvolucaoDsm[]
-  tipoEvolucaoClinica   TipoEvolucaoClinica? @relation(fields: [tipoEvolucaoClinicaId], references: [id])
-  tipoEvolucaoClinicaId Int?                 @db.Integer
 
   @@map("evolucoes")
-  @@schema("cecom")
+  
 }
-
-enum TipoParentesco {
-  P // Pai
-  M // Mãe
-  T // Tutor
-  F // Filho(a)
-  C // Cônjuge
-  O // Outro
-  R // Próprio paciente
-
-  @@schema("cecom")
-}
-
-//-------------------------------------------------------
-// MÓDULO 7 — PESSOAS RELACIONADAS (MVP)
-//-------------------------------------------------------
 
 model PessoaRelacionada {
-  id        Int     @id @default(autoincrement()) @db.Integer
-  nome      String  @db.VarChar(120)
-  telefone  String? @db.VarChar(20)
-  stInativo SimNao? @map("stInativo")
-
-  parentescos ParentescoPaciente[]
+  id          Int                         @id @default(autoincrement())
+  nome        String                      @db.VarChar(120)
+  telefone    String?                     @db.VarChar(20)
+  stInativo   SimNao?                     @map("stInativo")
   enderecos   EnderecoPessoaRelacionada[]
+  parentescos ParentescoPaciente[]
 
   @@map("pessoasrelacionadas")
-  @@schema("cecom")
+  
 }
 
 model ParentescoPaciente {
-  id         Int            @id @default(autoincrement()) @db.Integer
-  cdMaster   Int
-  cdPaciente Int
-  cdPessoa   Int
-  parentesco TipoParentesco @map("tipo")
-
+  id                Int               @id @default(autoincrement())
+  cdMaster          Int
+  cdPaciente        Int
+  cdPessoa          Int
+  parentesco        TipoParentesco    @map("tipo")
   paciente          Paciente          @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente])
   pessoaRelacionada PessoaRelacionada @relation(fields: [cdPessoa], references: [id])
 
   @@map("parentescospacientes")
-  @@schema("cecom")
+  
 }
 
-//-------------------------------------------------------
-// MÓDULO 8 — TABELAS AUXILIARES (MVP)
-//-------------------------------------------------------
-
 model Plano {
-  id        Int     @id @default(autoincrement()) @db.Integer
+  id        Int     @id @default(autoincrement())
   descricao String  @db.VarChar(120)
   stInativo SimNao? @map("stInativo")
 
   @@map("planos")
-  @@schema("cecom")
+  
 }
 
 model Motivo {
-  id        Int     @id @default(autoincrement()) @db.Integer
+  id        Int     @id @default(autoincrement())
   descricao String  @db.VarChar(200)
   stInativo SimNao? @map("stInativo")
 
   @@map("motivos")
-  @@schema("cecom")
+  
 }
 
 model TipoProcedimento {
-  id        Int     @id @default(autoincrement()) @db.Integer
+  id        Int     @id @default(autoincrement())
   descricao String  @db.VarChar(120)
   stInativo SimNao? @map("stInativo")
 
   @@map("tiposprocedimentos")
-  @@schema("cecom")
+  
 }
 
 model TipoEvolucaoSimples {
-  id        Int     @id @default(autoincrement()) @db.Integer
+  id        Int     @id @default(autoincrement())
   descricao String  @db.VarChar(120)
   stInativo SimNao? @map("stInativo")
 
   @@map("tiposevolucaosimples")
-  @@schema("cecom")
+  
 }
 
-//-------------------------------------------------------
-// MÓDULO 9 — LOCALIZAÇÃO COMPLETA (MVP Seguro)
-//-------------------------------------------------------
-
 model Pais {
-  id            Int     @id @default(autoincrement()) @db.SmallInt
-  descricao     String  @db.VarChar(60)
-  nacionalidade String? @db.VarChar(60)
-  cdIbge        Int?    @db.Integer
-
-  cidades Cidade[]
+  id            Int      @id @default(autoincrement()) @db.SmallInt
+  descricao     String   @db.VarChar(60)
+  nacionalidade String?  @db.VarChar(60)
+  cdIbge        Int?
+  cidades       Cidade[]
 
   @@map("paises")
-  @@schema("cecom")
+  
 }
 
 model UnidadeFederacao {
-  id        String @id @db.Char(2) // Ex.: 'BA', 'SP'
-  descricao String @db.VarChar(60)
-  cdIbge    Int?   @db.Integer
-
-  cidades Cidade[]
+  id        String   @id @db.Char(2)
+  descricao String   @db.VarChar(60)
+  cdIbge    Int?
+  cidades   Cidade[]
 
   @@map("unidadesfederacao")
-  @@schema("cecom")
+  
 }
 
 model Cidade {
-  id        Int     @id @default(autoincrement()) @db.Integer
-  descricao String  @db.VarChar(120)
-  cdUf      String  @db.Char(2)
+  id        Int              @id @default(autoincrement())
+  descricao String           @db.VarChar(120)
+  cdUf      String           @db.Char(2)
   cdPais    Int
-  cepGeral  String? @db.VarChar(9)
-  cdIbge    Int?    @db.Integer
-  stInativo SimNao? @map("stInativo")
-
-  uf        UnidadeFederacao @relation(fields: [cdUf], references: [id])
-  pais      Pais             @relation(fields: [cdPais], references: [id])
-  enderecos Endereco[]
-  distritos Distrito[]
+  cepGeral  String?          @db.VarChar(9)
+  cdIbge    Int?
+  stInativo SimNao?          @map("stInativo")
   bairros   Bairro[]
+  pais      Pais             @relation(fields: [cdPais], references: [id])
+  uf        UnidadeFederacao @relation(fields: [cdUf], references: [id])
+  distritos Distrito[]
+  enderecos Endereco[]
 
   @@index([cdUf])
   @@index([cdPais])
   @@map("cidades")
-  @@schema("cecom")
+  
 }
-
-//-------------------------------------------------------
-// MÓDULO 11 — OCUPAÇÕES E ESCOLARIDADE (MVP)
-//-------------------------------------------------------
 
 model Escolaridade {
   id        Int        @id @default(autoincrement()) @db.SmallInt
@@ -444,7 +293,7 @@ model Escolaridade {
   pacientes Paciente[]
 
   @@map("escolaridades")
-  @@schema("cecom")
+  
 }
 
 model Ocupacao {
@@ -456,64 +305,48 @@ model Ocupacao {
   profissionals Profissional[]
 
   @@map("ocupacoes")
-  @@schema("cecom")
+  
 }
 
-//-------------------------------------------------------
-// MÓDULO 13 — LOCALIZAÇÃO AVANÇADA (Bairro, Distrito)
-//-------------------------------------------------------
-
 model Distrito {
-  id        Int     @id @default(autoincrement()) @db.Integer
+  id        Int      @id @default(autoincrement())
   cdCidade  Int
-  descricao String  @db.VarChar(120)
-  stInativo SimNao? @map("stInativo")
-
-  cidade  Cidade   @relation(fields: [cdCidade], references: [id])
-  bairros Bairro[]
+  descricao String   @db.VarChar(120)
+  stInativo SimNao?  @map("stInativo")
+  bairros   Bairro[]
+  cidade    Cidade   @relation(fields: [cdCidade], references: [id])
 
   @@map("distritos")
-  @@schema("cecom")
+  
 }
 
 model Bairro {
-  id         Int     @id @default(autoincrement()) @db.Integer
+  id         Int        @id @default(autoincrement())
   cdDistrito Int?
   cdCidade   Int
-  descricao  String  @db.VarChar(120)
-  stInativo  SimNao? @map("stInativo")
-
-  distrito Distrito? @relation(fields: [cdDistrito], references: [id])
-  cidade   Cidade    @relation(fields: [cdCidade], references: [id])
-
-  enderecos Endereco[]
+  descricao  String     @db.VarChar(120)
+  stInativo  SimNao?    @map("stInativo")
+  cidade     Cidade     @relation(fields: [cdCidade], references: [id])
+  distrito   Distrito?  @relation(fields: [cdDistrito], references: [id])
+  enderecos  Endereco[]
 
   @@map("bairros")
-  @@schema("cecom")
+  
 }
-
-//-------------------------------------------------------
-// MÓDULO 14 — ENDEREÇO PARA PESSOA RELACIONADA
-//-------------------------------------------------------
 
 model EnderecoPessoaRelacionada {
-  id         Int @id @default(autoincrement()) @db.Integer
-  cdPessoa   Int
-  cdEndereco Int
-
-  pessoaRelacionada PessoaRelacionada @relation(fields: [cdPessoa], references: [id])
+  id                Int               @id @default(autoincrement())
+  cdPessoa          Int
+  cdEndereco        Int
   endereco          Endereco          @relation(fields: [cdEndereco], references: [id])
+  pessoaRelacionada PessoaRelacionada @relation(fields: [cdPessoa], references: [id])
 
   @@map("enderecospessoasrelacionadas")
-  @@schema("cecom")
+  
 }
 
-//-------------------------------------------------------
-// MÓDULO 15 — CID, DSM E TIPO DE EVOLUÇÃO CLÍNICA
-//-------------------------------------------------------
-
 model Cid {
-  id           Int           @id @default(autoincrement()) @db.Integer
+  id           Int           @id @default(autoincrement())
   codigo       String        @db.VarChar(10)
   descricao    String        @db.VarChar(300)
   versao       VersaoCid
@@ -522,11 +355,11 @@ model Cid {
 
   @@unique([codigo, versao])
   @@map("cid")
-  @@schema("cecom")
+  
 }
 
 model Dsm {
-  id           Int           @id @default(autoincrement()) @db.Integer
+  id           Int           @id @default(autoincrement())
   codigo       String        @db.VarChar(10)
   descricao    String        @db.VarChar(300)
   versao       VersaoDsm
@@ -535,192 +368,228 @@ model Dsm {
 
   @@unique([codigo, versao])
   @@map("dsm")
-  @@schema("cecom")
+  
 }
 
-// Tipos modernos de evolução clínica
 model TipoEvolucaoClinica {
-  id        Int        @id @default(autoincrement()) @db.Integer
+  id        Int        @id @default(autoincrement())
   descricao String     @db.VarChar(120)
   stInativo SimNao?    @map("stInativo")
   evolucaos Evolucao[]
 
   @@map("tiposevolucoesclinicas")
-  @@schema("cecom")
+  
 }
 
-//-------------------------------------------------------
-// MÓDULO 16 — RELACIONAMENTO EVOLUCAO ↔ CID / DSM
-//-------------------------------------------------------
-
 model EvolucaoCid {
-  id         Int @id @default(autoincrement()) @db.Integer
+  id         Int      @id @default(autoincrement())
   cdEvolucao Int
   cdCid      Int
-
-  evolucao Evolucao @relation(fields: [cdEvolucao], references: [id])
-  cid      Cid      @relation(fields: [cdCid], references: [id])
+  cid        Cid      @relation(fields: [cdCid], references: [id])
+  evolucao   Evolucao @relation(fields: [cdEvolucao], references: [id])
 
   @@map("evolucoescid")
-  @@schema("cecom")
+  
 }
 
 model EvolucaoDsm {
-  id         Int @id @default(autoincrement()) @db.Integer
+  id         Int      @id @default(autoincrement())
   cdEvolucao Int
   cdDsm      Int
-
-  evolucao Evolucao @relation(fields: [cdEvolucao], references: [id])
-  dsm      Dsm      @relation(fields: [cdDsm], references: [id])
+  dsm        Dsm      @relation(fields: [cdDsm], references: [id])
+  evolucao   Evolucao @relation(fields: [cdEvolucao], references: [id])
 
   @@map("evolucoesdsm")
-  @@schema("cecom")
+  
 }
 
 model SinaisVitais {
-  id            Int      @id @default(autoincrement())
+  id            Int              @id @default(autoincrement())
   cdAtendimento Int
-  data          DateTime @default(now())
-
-  // Pressão arterial
-  paSistolica  Int? @db.SmallInt
-  paDiastolica Int? @db.SmallInt
-
-  // Frequências
-  fc Int? @db.SmallInt
-  fr Int? @db.SmallInt
-
-  // Febre
-  temperatura Decimal? @db.Decimal(4, 1)
-
-  // Oxigenação
-  spo2 Int? @db.SmallInt
-
-  // Medidas antropométricas
-  peso   Decimal? @db.Decimal(5, 2)
-  altura Decimal? @db.Decimal(4, 2)
-  imc    Decimal? @db.Decimal(5, 2)
-
-  // Dor
-  dor         Int?       @db.SmallInt
-  escalaDorId Int?
-  escalaDor   EscalaDor? @relation(fields: [escalaDorId], references: [id])
-
-  // Posição do paciente
-  posicao PosicaoPaciente?
-
-  // Origem da aferição
-  origem OrigemAfericao? @default(MANUAL)
-
-  // Informação bruta (logs e integrações)
-  metadataRaw Json?
-
-  atendimento Atendimento @relation(fields: [cdAtendimento], references: [id])
+  data          DateTime         @default(now())
+  paSistolica   Int?             @db.SmallInt
+  paDiastolica  Int?             @db.SmallInt
+  fc            Int?             @db.SmallInt
+  fr            Int?             @db.SmallInt
+  temperatura   Decimal?         @db.Decimal(4, 1)
+  spo2          Int?             @db.SmallInt
+  peso          Decimal?         @db.Decimal(5, 2)
+  altura        Decimal?         @db.Decimal(4, 2)
+  imc           Decimal?         @db.Decimal(5, 2)
+  dor           Int?             @db.SmallInt
+  escalaDorId   Int?
+  posicao       PosicaoPaciente?
+  origem        OrigemAfericao?  @default(MANUAL)
+  metadataRaw   Json?
+  atendimento   Atendimento      @relation(fields: [cdAtendimento], references: [id])
+  escalaDor     EscalaDor?       @relation(fields: [escalaDorId], references: [id])
 
   @@map("sinaisvitais")
-  @@schema("cecom")
+  
 }
 
 model EscalaDor {
-  id        Int     @id @default(autoincrement())
-  nome      String  @db.VarChar(100) // Ex: EVA, NIPS, Wong-Baker
-  descricao String? @db.VarChar(300)
-
+  id           Int            @id @default(autoincrement())
+  nome         String         @db.VarChar(100)
+  descricao    String?        @db.VarChar(300)
   sinaisVitais SinaisVitais[]
 
   @@map("escalasdor")
-  @@schema("cecom")
+  
 }
 
 model Glasgow {
-  id             Int      @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   cdAtendimento  Int
-  cdProfissional Int?     @map("cdProf")
-  data           DateTime @default(now()) @db.Timestamptz
-
-  // Componentes da ECG
-  ocular Int // 1–4
-  verbal Int // 1–5
-  motora Int // 1–6
-  total  Int // 3–15, calculado pela API, salvo no banco
-
-  observacao String? @db.VarChar(300)
-
-  // Relacionamentos
-  atendimento  Atendimento   @relation(fields: [cdAtendimento], references: [id])
-  profissional Profissional? @relation(fields: [cdProfissional], references: [id])
+  cdProfissional Int?          @map("cdProf")
+  data           DateTime      @default(now()) @db.Timestamptz(6)
+  ocular         Int
+  verbal         Int
+  motora         Int
+  total          Int
+  observacao     String?       @db.VarChar(300)
+  atendimento    Atendimento   @relation(fields: [cdAtendimento], references: [id])
+  profissional   Profissional? @relation(fields: [cdProfissional], references: [id])
 
   @@index([cdAtendimento])
   @@index([cdProfissional])
   @@map("glasgow")
-  @@schema("cecom")
+  
 }
 
 model AfericaoClinica {
-  id             Int      @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   cdAtendimento  Int
-  cdProfissional Int?     @map("cdProf")
-  escala         String   @db.VarChar(50) // exemplo: 'GLASGOW', 'EVA', 'BRADEN'
-  idRegistro     Int // id da tabela específica (ex.: id da cecom.glasgow)
-  data           DateTime @default(now()) @db.Timestamptz
-
-  atendimento  Atendimento   @relation(fields: [cdAtendimento], references: [id])
-  profissional Profissional? @relation(fields: [cdProfissional], references: [id])
+  cdProfissional Int?          @map("cdProf")
+  escala         String        @db.VarChar(50)
+  idRegistro     Int
+  data           DateTime      @default(now()) @db.Timestamptz(6)
+  atendimento    Atendimento   @relation(fields: [cdAtendimento], references: [id])
+  profissional   Profissional? @relation(fields: [cdProfissional], references: [id])
 
   @@index([cdAtendimento])
   @@index([escala])
   @@map("afericoesclinicas")
-  @@schema("cecom")
+  
 }
 
 model EvaDor {
-  id             Int      @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   cdAtendimento  Int
   cdProfissional Int?
-  data           DateTime @default(now()) @db.Timestamptz
-
-  valor      Int // 0 a 10
-  observacao String? @db.VarChar(300)
-
-  atendimento  Atendimento   @relation(fields: [cdAtendimento], references: [id])
-  profissional Profissional? @relation(fields: [cdProfissional], references: [id])
+  data           DateTime      @default(now()) @db.Timestamptz(6)
+  valor          Int
+  observacao     String?       @db.VarChar(300)
+  atendimento    Atendimento   @relation(fields: [cdAtendimento], references: [id])
+  profissional   Profissional? @relation(fields: [cdProfissional], references: [id])
 
   @@index([cdAtendimento])
   @@index([cdProfissional])
   @@map("eva")
-  @@schema("cecom")
+  
 }
 
-//-------------------------------------------------------
-// MÓDULO 17 — Novo módulo/tabelas mínimas para login
-//-------------------------------------------------------
+model UsuarioAuth {
+  id             Int           @id @default(autoincrement())
+  cdMaster       Int
+  email          String        @db.VarChar(150)
+  senhaHash      String        @db.VarChar(255)
+  role           RoleAuth      @default(PROFISSIONAL)
+  cdProfissional Int?
+  cdPaciente     Int?
+  paciente       Paciente?     @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente], onDelete: SetNull)
+  master         Master        @relation(fields: [cdMaster], references: [id])
+  profissional   Profissional? @relation(fields: [cdProfissional], references: [id])
+
+  @@unique([cdMaster, email])
+  @@index([cdMaster])
+  @@map("usuariosauth")
+  
+}
+
+enum SimNao {
+  S
+  N
+
+  
+}
+
+enum Sexo {
+  M
+  F
+  I
+
+  
+}
+
+enum VersaoCid {
+  c9
+  c10
+
+  
+}
+
+enum VersaoDsm {
+  d4
+  d5
+
+  
+}
+
+enum HumorIntensidade {
+  NIVEL_1 @map("1")
+  NIVEL_2 @map("2")
+  NIVEL_3 @map("3")
+  NIVEL_4 @map("4")
+  NIVEL_5 @map("5")
+
+  
+}
+
+enum OrigemAfericao {
+  MANUAL
+  OXIMETRO
+  BALANCA
+  RELOGIO_INTELIGENTE
+  MONITOR_HOSPITALAR
+
+  
+}
+
+enum PosicaoPaciente {
+  SENTADO
+  DEITADO
+  ORTOSTATICO
+  EM_PE
+
+  
+}
+
+enum TipoFone {
+  R
+  T
+  C
+  P
+
+  
+}
+
+enum TipoParentesco {
+  P
+  M
+  T
+  F
+  C
+  O
+  R
+
+  
+}
 
 enum RoleAuth {
   ADMIN
   PROFISSIONAL
   LEITURA
 
-  @@schema("cecom")
-}
-
-model UsuarioAuth {
-  id        Int      @id @default(autoincrement())
-  cdMaster  Int
-  email     String   @db.VarChar(150)
-  senhaHash String   @db.VarChar(255)
-  role      RoleAuth @default(PROFISSIONAL)
-
-  cdProfissional Int?
-  cdPaciente     Int?
-
-  // 🔗 relações
-  master Master @relation(fields: [cdMaster], references: [id])
-
-  profissional Profissional? @relation(fields: [cdProfissional], references: [id], onDelete: SetNull)
-  paciente     Paciente?     @relation(fields: [cdMaster, cdPaciente], references: [cdMaster, cdPaciente], onDelete: SetNull)
-
-  @@unique([cdMaster, email])
-  @@index([cdMaster])
-  @@map("usuariosauth")
-  @@schema("cecom")
+  
 }

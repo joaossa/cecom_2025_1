@@ -1,4 +1,4 @@
-import prisma from "../../config/prisma";
+import { prisma } from "../../db/prisma";
 import { PacienteCreateInput } from "./paciente.dto";
 
 export class PacienteService {

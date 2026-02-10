@@ -743,3 +743,97 @@ Como gerar a JWT_SECRET corretamente (forma recomendada)
 No terminal:
 
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+
+
+
+========================= PRISMA DANDO CERTO......
+
+(base) PS F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api> npx prisma migrate resolve --applied 20260120222407_initial
+	Migration 20260120222407_initial marked as applied.
+
+(base) PS F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api> npx prisma migrate deploy
+	1 migration found in prisma/migrations
+	No pending migrations to apply.
+	
+(base) PS F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api> npx prisma db pull
+	✔ Introspected 2 models and wrote them into prisma\schema.prisma in 1.60s
+
+	Run prisma generate to generate Prisma Client.
+	
+
+===========================	A MELHOR SOLUÇÃO ATÉ AGORA......
+===========================	A MELHOR SOLUÇÃO ATÉ AGORA......
+===========================	A MELHOR SOLUÇÃO ATÉ AGORA......
+===========================	A MELHOR SOLUÇÃO ATÉ AGORA......	
+===========================	A MELHOR SOLUÇÃO ATÉ AGORA......
+
+		🟡 CAMINHO B — Prisma assume tudo (RECOMENDADO PARA SEU CASO)
+
+		👉 Use quando:
+
+		Banco existe, mas vazio ou descartável
+
+		Você quer Prisma como dono do schema
+
+		Passos exatos:
+		1️⃣ Apagar schema public no Neon
+
+		No DBeaver:
+
+		DROP SCHEMA public CASCADE;
+		CREATE SCHEMA public;
+
+
+		⚠️ Isso apaga TUDO naquele schema.
+
+		2️⃣ Conferir .env
+		DATABASE_URL="postgresql://.../neondb?sslmode=require"
+
+
+		❌ SEM search_path
+
+		3️⃣ Conferir schema.prisma
+		datasource db {
+		  provider = "postgresql"
+		  schemas  = ["public"]
+		}
+
+
+		E todos os modelos:
+
+		@@schema("public")
+
+		4️⃣ Rodar:
+		npx prisma migrate deploy
+
+
+		🎯 Resultado esperado:
+
+		Todas as tabelas criadas
+
+		_prisma_migrations criada
+
+		Neon alinhado com o schema	
+		
+		
+		
+===============================
+
+rm -rf node_modules package-lock.json
+npm install
+npx prisma generate		
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+Adicionar os modelos e enums faltantes ao arquivo schema.prisma.
+Garantir que cada tabela/modelo tenha o bloco correto, incluindo enums e relações.
+Salvar o arquivo schema.prisma.
+Rodar npx prisma generate para atualizar o Prisma Client.
+Rodar npx prisma migrate dev para aplicar as mudanças no banco (se desejar).
+
+
+    "@prisma/client": "^7.3.0",
+    "prisma": "^7.3.0",

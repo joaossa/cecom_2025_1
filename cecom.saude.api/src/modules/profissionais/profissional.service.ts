@@ -1,4 +1,4 @@
-import prisma from "../../config/prisma";
+import { prisma } from "../../db/prisma";
 import { ProfissionalCreateInput } from "./profissional.dto";
 
 export class ProfissionalService {
