@@ -4,15 +4,21 @@ import jwt from "jsonwebtoken";
 
 export class AuthService {
   async login(email: string, senha: string) {
-    const usuario = await prisma.usuarioAuth.findFirst({
-      where: { email },
+    const usuario = await prisma.usuarioAuth.findUnique({
+      where: {
+        cdMaster_email: {
+          cdMaster: 1,
+          email: email,
+        },
+      },
     });
 
     if (!usuario) {
-      throw new Error("Credenciais inválidas");
+      throw new Error("E-mail ou senha inválidos");
     }
 
     const senhaOk = await bcrypt.compare(senha, usuario.senhaHash);
+    console.log("bcrypt.compare =", senhaOk);
     if (!senhaOk) {
       throw new Error("Credenciais inválidas");
     }

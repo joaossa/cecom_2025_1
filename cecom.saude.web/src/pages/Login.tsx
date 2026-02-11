@@ -15,6 +15,8 @@ export function Login() {
     setLoading(true);
 
     try {
+      console.log("Senha recebida:", email);
+      console.log("Hash do banco:", senha);
       await login(email, senha);
     } catch {
       setErro("E-mail ou senha inválidos");
@@ -32,7 +34,7 @@ export function Login() {
           <label>E-mail</label>
           <input
             type="email"
-            value={email}
+            value={email.trim().toLowerCase()}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
