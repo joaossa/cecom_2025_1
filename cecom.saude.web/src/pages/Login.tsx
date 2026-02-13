@@ -28,7 +28,7 @@ export function Login() {
   }, [senha]);
 
   function resetFeedback() {
-    resetFeedback();
+    setErro(null);
     setSucesso(null);
   }
 
@@ -42,7 +42,16 @@ export function Login() {
       const master = Number(cdMaster);
       
       if (mode === "login") {
+      try {
+        console.log("Senha recebida:", email);
+        console.log("Hash do banco:", senha);  
         await login(normalizedEmail, senha);
+        setSucesso("Login realizado com sucesso.");
+       } catch {
+        setErro("E-mail ou senha inválidos");
+       } finally {
+        setLoading(false);
+       }
       }
 
       if (mode === "register") {
