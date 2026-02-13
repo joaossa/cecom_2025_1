@@ -9,7 +9,7 @@ export class AuthService {
       where: {
         cdMaster_email: {
           cdMaster: 1,
-          email: email,
+          email,
         },
       },
     });
@@ -19,7 +19,6 @@ export class AuthService {
     }
 
     const senhaOk = await bcrypt.compare(senha, usuario.senhaHash);
-    console.log("bcrypt.compare =", senhaOk);
     if (!senhaOk) {
       throw new Error("Credenciais inválidas");
     }
@@ -41,6 +40,61 @@ export class AuthService {
         role: usuario.role,
         cdMaster: usuario.cdMaster,
       },
+    };
+  }
+  async register(cdMaster: number, email: string, senha: string) {
+    const master = await prisma.master.findUnique({ where: { id: cdMaster } });
+
+    if (!master || master.stInativo === "S") {
+      throw new Error("Master inválido ou inativo");
+    }
+
+    const existe = await prisma.usuarioAuth.findUnique({
+      where: {
+        cdMaster_email: {
+          cdMaster,
+          email,
+        },
+      },
+    });
+
+    if (existe) {
+      throw new Error("Já existe usuário com esse e-mail neste Master");
+    }
+
+    const senhaHash = await bcrypt.hash(senha, 12);
+
+    await prisma.usuarioAuth.create({
+      data: {
+        cdMaster,
+        email,
+        senhaHash,
+        role: "PROFISSIONAL",
+      },
+    });
+
+    return { message: "Conta criada com sucesso. Faça login para continuar." };
+  }
+
+  async requestPasswordRecovery(cdMaster: number, email: string) {
+    const usuario = await prisma.usuarioAuth.findUnique({
+      where: {
+        cdMaster_email: {
+          cdMaster,
+          email,
+        },
+      },
+    });
+
+    if (usuario) {
+      console.info(
+        `[auth] Solicitação de recuperação para usuário ${usuario.id} (master ${cdMaster}). Configure envio de e-mail com token de uso único.`
+      );
+    }
+
+    return {
+      message:
+        "Se existir uma conta para esse e-mail, você receberá instruções de recuperação.",
     };
   }
 }

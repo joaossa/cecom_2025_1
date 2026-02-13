@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import { z } from "zod";
-import { LoginDTO } from "./auth.dto";
+import { LoginDTO, RecoveryRequestDTO, RegisterDTO } from "./auth.dto";
 import { AuthService } from "./auth.service";
 
 const service = new AuthService();
 
 export class AuthController {
   async login(req: Request, res: Response) {
-    console.log("JWT_SECRET definido?", !!process.env.JWT_SECRET, "len=", process.env.JWT_SECRET?.length);
     const parsed = LoginDTO.safeParse(req.body);
     
     if (!parsed.success) {
@@ -18,10 +17,7 @@ export class AuthController {
     }
 
     try {
-      const result = await service.login(
-        parsed.data.email,
-        parsed.data.senha
-      );
+      const result = await service.login(parsed.data.email, parsed.data.senha);
       
       return res.json(result);
     } catch (err: any) {
@@ -30,7 +26,50 @@ export class AuthController {
     }
   }
 
-  // 🧩 ENDPOINT ME
+  async register(req: Request, res: Response) {
+    const parsed = RegisterDTO.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Dados inválidos",
+        errors: z.treeifyError(parsed.error),
+      });
+    }
+
+    try {
+      const result = await service.register(
+        parsed.data.cdMaster,
+        parsed.data.email,
+        parsed.data.senha
+      );
+
+      return res.status(201).json(result);
+    } catch (error) {
+      return res.status(400).json({
+        message: error instanceof Error ? error.message : "Não foi possível criar conta",
+      });
+    }
+  }
+
+  async requestPasswordRecovery(req: Request, res: Response) {
+    const parsed = RecoveryRequestDTO.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        message: "Dados inválidos",
+        errors: z.treeifyError(parsed.error),
+      });
+    }
+
+    const result = await service.requestPasswordRecovery(
+      parsed.data.cdMaster,
+      parsed.data.email
+    );
+
+    return res.status(202).json(result);
+  }
+
+  
   async me(req: Request, res: Response) {
     if (!req.user) {
       return res.status(401).json({ message: "Não autenticado" });
