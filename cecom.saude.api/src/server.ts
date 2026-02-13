@@ -4,6 +4,10 @@ import { prisma } from "./db/prisma";
 
 async function bootstrap() {
   try {
+    if (!process.env.JWT_SECRET) {
+      console.error("FATAL: JWT_SECRET não definido no .env");
+      process.exit(1);
+    }
     await prisma.$connect();
     console.log("✅ Prisma conectado");
 

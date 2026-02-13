@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 export class AuthService {
   async login(email: string, senha: string) {
+    console.log("JWT_SECRET definido?", !!process.env.JWT_SECRET, "len=", process.env.JWT_SECRET?.length);
     const usuario = await prisma.usuarioAuth.findUnique({
       where: {
         cdMaster_email: {

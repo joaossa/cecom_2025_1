@@ -7,6 +7,7 @@ const service = new AuthService();
 
 export class AuthController {
   async login(req: Request, res: Response) {
+    console.log("JWT_SECRET definido?", !!process.env.JWT_SECRET, "len=", process.env.JWT_SECRET?.length);
     const parsed = LoginDTO.safeParse(req.body);
     
     if (!parsed.success) {
@@ -23,8 +24,9 @@ export class AuthController {
       );
       
       return res.json(result);
-    } catch {
-      return res.status(401).json({ message: "Login inválido" });
+    } catch (err: any) {
+      console.error("Erro no login:", err?.message ?? err, err?.stack);
+      return res.status(401).json({ message: err?.message ?? "Login inválido" });
     }
   }
 
