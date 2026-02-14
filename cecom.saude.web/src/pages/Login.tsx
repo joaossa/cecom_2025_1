@@ -40,18 +40,15 @@ export function Login() {
     try {
       const normalizedEmail = email.trim().toLowerCase();
       const master = Number(cdMaster);
+
+      if (!Number.isInteger(master) || master <= 0) {
+        throw new Error("Informe um Código Master válido.");
+      }
       
       if (mode === "login") {
-      try {
-        console.log("Senha recebida:", email);
-        console.log("Hash do banco:", senha);  
-        await login(normalizedEmail, senha);
+        await login(master, normalizedEmail, senha);
         setSucesso("Login realizado com sucesso.");
-       } catch {
-        setErro("E-mail ou senha inválidos");
-       } finally {
-        setLoading(false);
-       }
+        return;
       }
 
       if (mode === "register") {
@@ -65,21 +62,23 @@ export function Login() {
         setMode("login");
         setSenha("");
         setConfirmarSenha("");
+        return;
       }
 
-      if (mode === "recovery") {
-        await api.post("/auth/recovery/request", {
-          cdMaster: master,
-          email: normalizedEmail,
-        });
-        setSucesso(
-          "Se existir uma conta para este e-mail, enviaremos instruções de recuperação."
-        );
-      }
+      await api.post("/auth/recovery/request", {
+        cdMaster: master,
+        email: normalizedEmail,
+      });
+      setSucesso(
+        "Se existir uma conta para este e-mail, enviaremos instruções de recuperação."
+      );
     } catch (error: any) {
       const message =
         error?.response?.data?.message ??
-        (mode === "login" ? "E-mail ou senha inválidos" : "Não foi possível concluir sua solicitação.");
+        (error instanceof Error ? error.message : null) ??
+        (mode === "login"
+          ? "E-mail ou senha inválidos"
+          : "Não foi possível concluir sua solicitação.");
       setErro(message);
     } finally {
       setLoading(false);
@@ -106,7 +105,7 @@ export function Login() {
         <form onSubmit={handleSubmit} className="auth-form">
           <label>
             Código Master
-            <input
+           <input
               type="number"
               min={1}
               value={cdMaster}

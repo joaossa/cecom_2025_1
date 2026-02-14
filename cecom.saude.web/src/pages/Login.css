@@ -3,20 +3,24 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: linear-gradient(120deg, #eef2ff, #f8fafc);
+  background:
+    radial-gradient(circle at top right, rgba(99, 102, 241, 0.2), transparent 38%),
+    radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.16), transparent 42%),
+    #f8fafc;
 }
 
 .auth-card {
-  width: min(100%, 520px);
+  width: min(100%, 560px);
   background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 12px 48px rgba(15, 23, 42, 0.14);
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 18px 54px rgba(15, 23, 42, 0.14);
   padding: 28px;
 }
 
 .auth-header h1 {
   margin: 8px 0;
-  font-size: 1.6rem;
+  font-size: 1.75rem;
   color: #0f172a;
 }
 
@@ -29,27 +33,32 @@
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #6366f1;
+  color: #4f46e5;
   font-weight: 700;
 }
 
 .auth-tabs {
   display: flex;
   gap: 8px;
-  margin-top: 18px;
+  margin-top: 20px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #f1f5f9;
 }
 
 .auth-tabs button {
   flex: 1;
-  border: 1px solid #cbd5e1;
-  background: #f8fafc;
+  border: 1px solid transparent;
+  background: transparent;
   color: #334155;
+  transition: all 0.2s ease;
 }
 
 .auth-tabs button.active {
-  border-color: #6366f1;
-  background: #e0e7ff;
+  border-color: #c7d2fe;
+  background: #ffffff;
   color: #3730a3;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
 }
 
 .auth-form {
@@ -67,9 +76,14 @@
 
 .auth-form input {
   border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  padding: 10px 12px;
+  border-radius: 12px;
+  padding: 11px 12px;
   font-size: 0.95rem;
+}
+
+.auth-form input:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 1px;
 }
 
 .password-hint {
@@ -103,8 +117,8 @@
 }
 
 .submit-btn {
-  margin-top: 4px;
-  background: #4f46e5;
+  margin-top: 6px;
+  background: linear-gradient(120deg, #4f46e5, #4338ca);
   color: #fff;
   border: none;
 }

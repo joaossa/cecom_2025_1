@@ -18,7 +18,7 @@ interface User {
 interface AuthContextData {
   user: User | null;
   loading: boolean;
-  login(email: string, senha: string): Promise<void>;
+  login(cdMaster: number, email: string, senha: string): Promise<void>;
   logout(): void;
 }
 
@@ -41,8 +41,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function login(email: string, senha: string) {
-    const response = await api.post("/auth/login", { email, senha });
+  async function login(cdMaster: number, email: string, senha: string) {
+    const response = await api.post("/auth/login", { cdMaster, email, senha });
     localStorage.setItem("token", response.data.token);
     setUser(response.data.usuario);
   }

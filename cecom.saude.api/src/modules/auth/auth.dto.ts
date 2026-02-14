@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const LoginDTO = z.object({
+  cdMaster: z.number().int().positive(),
   email: z.string().trim().toLowerCase().email(),
   senha: z.string().min(6),
 });

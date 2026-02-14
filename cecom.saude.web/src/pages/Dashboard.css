@@ -1,0 +1,59 @@
+.dashboard-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #f8fafc;
+}
+
+.dashboard-card {
+  width: min(100%, 640px);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.1);
+}
+
+.dashboard-eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #4f46e5;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.dashboard-copy {
+  color: #475569;
+}
+
+.dashboard-grid {
+  margin: 20px 0;
+  display: grid;
+  gap: 10px;
+}
+
+.dashboard-grid div {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  background: #f8fafc;
+}
+
+.dashboard-grid dt {
+  margin-bottom: 4px;
+  color: #475569;
+}
+
+.dashboard-grid dd {
+  margin: 0;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.logout-btn {
+  border: none;
+  background: #1e293b;
+  color: #fff;
+}

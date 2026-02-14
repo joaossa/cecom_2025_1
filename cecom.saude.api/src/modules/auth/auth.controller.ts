@@ -17,7 +17,12 @@ export class AuthController {
     }
 
     try {
-      const result = await service.login(parsed.data.email, parsed.data.senha);
+      const result = await service.login(
+        parsed.data.cdMaster,
+        parsed.data.email,
+        parsed.data.senha
+      );
+
       
       return res.json(result);
     } catch (err: any) {
