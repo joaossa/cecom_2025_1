@@ -121,9 +121,8 @@ export function Login() {
 
       <section className="auth-card" aria-label="Acesso a plataforma Cecom Saúde">
         <header className="auth-header">
-          <p className="auth-eyebrow">Cecom Saúde - Igreja Batista da Graça</p>
-          <h2>Centro Comunitário Clériston Andrade</h2>
-          <p>Entre, crie uma conta ou recupere sua senha em um fluxo unico e seguro.</p>
+          <p className="auth-eyebrow">Cecom Saúde</p>
+          <p className="auth-eyebrow">Igreja Batista da Graça</p>
         </header>
 
         <Tabs.Root value={mode} onValueChange={handleModeChange} className="auth-tabs-root">
@@ -138,21 +137,11 @@ export function Login() {
               Recuperar senha
             </Tabs.Trigger>
           </Tabs.List>
-
-          <Tabs.Content value="login" className="auth-panel">
-            <p className="mode-description">Use seu e-mail corporativo e senha para entrar.</p>
-          </Tabs.Content>
-          <Tabs.Content value="register" className="auth-panel">
-            <p className="mode-description">Crie seu acesso vinculado ao Unidade Organizacional.</p>
-          </Tabs.Content>
-          <Tabs.Content value="recovery" className="auth-panel">
-            <p className="mode-description">Informe os dados para receber instrucoes de recuperacao.</p>
-          </Tabs.Content>
         </Tabs.Root>
 
         <form onSubmit={handleSubmit} className="auth-form" noValidate>
           <label className="input-group">
-            Unidade Organizacional
+            Organização
             <input
               type="number"
               min={1}
@@ -164,7 +153,7 @@ export function Login() {
           </label>
 
           <label className="input-group">
-            E-mail corporativo
+            E-mail
             <input
               type="email"
               value={email}

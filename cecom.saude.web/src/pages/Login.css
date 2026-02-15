@@ -13,6 +13,7 @@
   --auth-success-bg: #ecfdf3;
   --auth-success-text: #166534;
   --auth-warning-text: #9a3412;
+  --auth-form-inset: 15px;
 }
 
 .auth-page {
@@ -44,14 +45,15 @@
   background: #5eead4;
 }
 
+/* Altera barra rolagem horizontal */
 .auth-glow-right {
-  right: -24px;
+  right: -5px;
   bottom: 40px;
   background: #93c5fd;
 }
-
+/* Alterar .auth-card */
 .auth-card {
-  width: min(100%, 620px);
+  width: min(100%, 420px);
   border-radius: 24px;
   border: 1px solid var(--auth-border);
   background: var(--auth-glass);
@@ -61,16 +63,18 @@
   padding: 20px;
 }
 
+/* Alterar espaço cabeçalho */
 .auth-header {
   display: grid;
   gap: 8px;
 }
 
+/* Alterar fonte do cabeçalho */
 .auth-eyebrow {
   margin: 0;
   font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #0e7490;
 }
@@ -90,7 +94,7 @@
 }
 
 .auth-tabs-root {
-  margin-top: 18px;
+  margin-top: 25px;
 }
 
 .auth-tabs-list {
@@ -104,6 +108,7 @@
   padding: 8px;
 }
 
+/* Alterar altura painel dos botões */
 .auth-tab-trigger {
   min-height: 42px;
   border-radius: 10px;
@@ -139,6 +144,7 @@
   margin-top: 14px;
   display: grid;
   gap: 12px;
+  padding-inline: var(--auth-form-inset);
 }
 
 .input-group {
