@@ -14,6 +14,7 @@
   --auth-success-text: #166534;
   --auth-warning-text: #9a3412;
   --auth-form-inset: 15px;
+  --auth-input-width: 100%;
 }
 
 .auth-page {
@@ -149,6 +150,8 @@
 
 .input-group {
   display: grid;
+  width: min(90%, var(--auth-input-width));
+  justify-self: center;
   gap: 6px;
   color: #1e293b;
   font-size: 0.92rem;
@@ -221,6 +224,9 @@
 }
 
 .submit-btn {
+  width: min(97%, var(--auth-input-width));
+  justify-self: center;
+  margin-left: 22px;
   margin-top: 4px;
   min-height: 46px;
   border-radius: 12px;
