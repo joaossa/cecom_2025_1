@@ -1,4 +1,29 @@
 
+============================================== LISTAR A ESTRUTURA DO PROJETO
+
+1. Listagem completa (hierarquia completa)
+
+Get-ChildItem -Path "F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api" -Recurse |
+    Select-Object FullName |
+    Out-File "F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\docs\estrutura_cecom_api_01.txt" -Encoding UTF8
+	
+2. Exibir a estrutura hierárquica tipo “árvore” (mais legível)
+
+tree "F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\cecom.saude.api" /F /A > "F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025_1\docs\estrutura_cecom_api_02.txt"
+
+===================== CONTRUÇÃO DO PROJETO E DISTRIBUIÇÃO DO PROJETO
+Sim, exatamente.
+
+src/: você cria e edita aqui (fonte oficial).
+
+dist/: saída compilada para execução/publicação.
+
+Fluxo correto: desenvolver em src -> rodar npm run build -> publicar/executar dist (ex.: npm start).
+
+Só cuide de um ponto: evitar editar dist manualmente, porque qualquer build sobrescreve.
+
+
+
 (base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>git status
 On branch main
 Your branch is up to date with 'origin/main'.
