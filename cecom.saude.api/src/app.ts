@@ -13,7 +13,34 @@ import { authMiddleware } from "./modules/auth/auth.middleware";
 
 const app = express();
 
-app.use(cors());
+const corsOriginsEnv = process.env.CORS_ORIGINS || "";
+const allowedOrigins = corsOriginsEnv
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow non-browser requests and local tools (curl, postman, health checks)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      // if no explicit whitelist is set, keep permissive behavior for local development
+      if (allowedOrigins.length === 0) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Origin not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // ROTAS PRINCIPAIS

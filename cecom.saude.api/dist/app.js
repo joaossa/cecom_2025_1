@@ -15,7 +15,28 @@ const auth_middleware_1 = require("./modules/auth/auth.middleware");
 // import escalasRouter from "./modules/escalas/glasgow.router";
 // import errorHandler from "./middlewares/errorHandler";
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+const corsOriginsEnv = process.env.CORS_ORIGINS || "";
+const allowedOrigins = corsOriginsEnv
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+app.use((0, cors_1.default)({
+    origin: (origin, callback) => {
+        // allow non-browser requests and local tools (curl, postman, health checks)
+        if (!origin) {
+            return callback(null, true);
+        }
+        // if no explicit whitelist is set, keep permissive behavior for local development
+        if (allowedOrigins.length === 0) {
+            return callback(null, true);
+        }
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error("Origin not allowed by CORS"));
+    },
+    credentials: true,
+}));
 app.use(express_1.default.json());
 // ROTAS PRINCIPAIS
 app.use("/auth", auth_router_1.default);
