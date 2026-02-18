@@ -4,8 +4,9 @@ import { api } from "../services/api";
 import "./Dashboard.css";
 
 type MainView = "inicio" | "configuracoes";
-type SettingsView = "master" | "pacientes" | "profissionais" | "usuarios";
+type SettingsView = "master" | "paises" | "pacientes" | "profissionais" | "usuarios";
 type MasterTab = "cadastro" | "listagem";
+type PaisTab = "cadastro" | "listagem";
 type SimNao = "S" | "N";
 
 interface MasterItem {
@@ -15,7 +16,15 @@ interface MasterItem {
   stInativo: SimNao | null;
 }
 
+interface PaisItem {
+  id: number;
+  descricao: string;
+  nacionalidade: string | null;
+  cdIbge: number | null;
+}
+
 const masterNomeRegex = /^[\p{L}\p{N} ]+$/u;
+const paisTextoRegex = /^[\p{L}\p{N} ]+$/u;
 
 function IconEdit() {
   return (
@@ -59,9 +68,26 @@ export function Dashboard() {
   const [savingMaster, setSavingMaster] = useState(false);
   const [rowActionId, setRowActionId] = useState<number | null>(null);
 
+  const [paisTab, setPaisTab] = useState<PaisTab>("cadastro");
+  const [paises, setPaises] = useState<PaisItem[]>([]);
+  const [paisesLoading, setPaisesLoading] = useState(false);
+  const [paisesError, setPaisesError] = useState<string | null>(null);
+
+  const [paisDescricao, setPaisDescricao] = useState("");
+  const [paisNacionalidade, setPaisNacionalidade] = useState("");
+  const [paisCdIbge, setPaisCdIbge] = useState("");
+  const [editingPaisId, setEditingPaisId] = useState<number | null>(null);
+  const [paisDescricaoError, setPaisDescricaoError] = useState<string | null>(null);
+  const [paisNacionalidadeError, setPaisNacionalidadeError] = useState<string | null>(null);
+  const [paisCdIbgeError, setPaisCdIbgeError] = useState<string | null>(null);
+  const [paisMessage, setPaisMessage] = useState<string | null>(null);
+  const [savingPais, setSavingPais] = useState(false);
+  const [paisRowActionId, setPaisRowActionId] = useState<number | null>(null);
+
   const settingsItems = useMemo(
     () => [
       { id: "master" as const, label: "Master", subtitle: "Organizacoes" },
+      { id: "paises" as const, label: "Paises", subtitle: "Tabela basica" },
       { id: "pacientes" as const, label: "Pacientes", subtitle: "Cadastro base" },
       { id: "profissionais" as const, label: "Profissionais", subtitle: "Cadastro base" },
       { id: "usuarios" as const, label: "Usuarios", subtitle: "Acesso e perfil" },
@@ -87,11 +113,35 @@ export function Dashboard() {
     }
   }, []);
 
+  const fetchPaises = useCallback(async () => {
+    setPaisesLoading(true);
+    setPaisesError(null);
+
+    try {
+      const response = await api.get<PaisItem[]>("/paises");
+      setPaises(response.data);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel listar os paises.";
+      setPaisesError(message);
+    } finally {
+      setPaisesLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (mainView === "configuracoes" && settingsView === "master") {
       void fetchMasters();
     }
   }, [fetchMasters, mainView, settingsView]);
+
+  useEffect(() => {
+    if (mainView === "configuracoes" && settingsView === "paises") {
+      void fetchPaises();
+    }
+  }, [fetchPaises, mainView, settingsView]);
 
   function validateMasterNome(nome: string) {
     const trimmed = nome.trim();
@@ -111,6 +161,61 @@ export function Dashboard() {
     return null;
   }
 
+  function validatePaisDescricao(value: string) {
+    const trimmed = value.trim();
+
+    if (trimmed.length === 0) {
+      return "Informe a descricao do pais.";
+    }
+
+    if (trimmed.length > 60) {
+      return "A descricao deve ter no maximo 60 caracteres.";
+    }
+
+    if (!paisTextoRegex.test(trimmed)) {
+      return "Use apenas caracteres alfanumericos e espacos.";
+    }
+
+    return null;
+  }
+
+  function validatePaisNacionalidade(value: string) {
+    const trimmed = value.trim();
+
+    if (trimmed.length === 0) {
+      return null;
+    }
+
+    if (trimmed.length > 60) {
+      return "A nacionalidade deve ter no maximo 60 caracteres.";
+    }
+
+    if (!paisTextoRegex.test(trimmed)) {
+      return "Use apenas caracteres alfanumericos e espacos.";
+    }
+
+    return null;
+  }
+
+  function validatePaisCdIbge(value: string) {
+    const trimmed = value.trim();
+
+    if (trimmed.length === 0) {
+      return null;
+    }
+
+    if (!/^\d+$/.test(trimmed)) {
+      return "O codigo IBGE deve ser numerico.";
+    }
+
+    const parsed = Number(trimmed);
+    if (!Number.isInteger(parsed) || parsed <= 0) {
+      return "O codigo IBGE deve ser um inteiro positivo.";
+    }
+
+    return null;
+  }
+
   function resetMasterForm() {
     setMasterNome("");
     setMasterInativo(false);
@@ -118,13 +223,35 @@ export function Dashboard() {
     setNomeError(null);
   }
 
-  function startEdit(master: MasterItem) {
+  function resetPaisForm() {
+    setPaisDescricao("");
+    setPaisNacionalidade("");
+    setPaisCdIbge("");
+    setEditingPaisId(null);
+    setPaisDescricaoError(null);
+    setPaisNacionalidadeError(null);
+    setPaisCdIbgeError(null);
+  }
+
+  function startMasterEdit(master: MasterItem) {
     setEditingMasterId(master.id);
     setMasterNome(master.nome);
     setMasterInativo(master.stInativo === "S");
     setNomeError(null);
     setMasterMessage(null);
     setMasterTab("cadastro");
+  }
+
+  function startPaisEdit(pais: PaisItem) {
+    setEditingPaisId(pais.id);
+    setPaisDescricao(pais.descricao);
+    setPaisNacionalidade(pais.nacionalidade ?? "");
+    setPaisCdIbge(pais.cdIbge !== null ? String(pais.cdIbge) : "");
+    setPaisDescricaoError(null);
+    setPaisNacionalidadeError(null);
+    setPaisCdIbgeError(null);
+    setPaisMessage(null);
+    setPaisTab("cadastro");
   }
 
   async function handleMasterSubmit(event: FormEvent<HTMLFormElement>) {
@@ -168,7 +295,54 @@ export function Dashboard() {
     }
   }
 
-  async function handleInativar(master: MasterItem) {
+  async function handlePaisSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const descricaoError = validatePaisDescricao(paisDescricao);
+    const nacionalidadeError = validatePaisNacionalidade(paisNacionalidade);
+    const cdIbgeError = validatePaisCdIbge(paisCdIbge);
+
+    setPaisDescricaoError(descricaoError);
+    setPaisNacionalidadeError(nacionalidadeError);
+    setPaisCdIbgeError(cdIbgeError);
+
+    if (descricaoError || nacionalidadeError || cdIbgeError) {
+      return;
+    }
+
+    setSavingPais(true);
+    setPaisMessage(null);
+
+    const payload = {
+      descricao: paisDescricao.trim(),
+      nacionalidade: paisNacionalidade.trim().length > 0 ? paisNacionalidade.trim() : null,
+      cdIbge: paisCdIbge.trim().length > 0 ? Number(paisCdIbge) : null,
+    };
+
+    try {
+      if (editingPaisId) {
+        await api.put(`/paises/${editingPaisId}`, payload);
+        setPaisMessage("Pais atualizado com sucesso.");
+      } else {
+        await api.post("/paises", payload);
+        setPaisMessage("Pais cadastrado com sucesso.");
+      }
+
+      resetPaisForm();
+      setPaisTab("listagem");
+      await fetchPaises();
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel salvar o pais.";
+      setPaisMessage(message);
+    } finally {
+      setSavingPais(false);
+    }
+  }
+
+  async function handleMasterInativar(master: MasterItem) {
     if (master.stInativo === "S") {
       return;
     }
@@ -191,7 +365,7 @@ export function Dashboard() {
     }
   }
 
-  async function handleExcluir(master: MasterItem) {
+  async function handleMasterExcluir(master: MasterItem) {
     const confirmed = window.confirm(`Excluir a organizacao Master '${master.nome}'?`);
 
     if (!confirmed) {
@@ -218,6 +392,36 @@ export function Dashboard() {
       setMasterMessage(message);
     } finally {
       setRowActionId(null);
+    }
+  }
+
+  async function handlePaisExcluir(pais: PaisItem) {
+    const confirmed = window.confirm(`Excluir o pais '${pais.descricao}'?`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    setPaisRowActionId(pais.id);
+    setPaisMessage(null);
+
+    try {
+      await api.delete(`/paises/${pais.id}`);
+      setPaisMessage("Pais excluido com sucesso.");
+
+      if (editingPaisId === pais.id) {
+        resetPaisForm();
+      }
+
+      await fetchPaises();
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel excluir o pais.";
+      setPaisMessage(message);
+    } finally {
+      setPaisRowActionId(null);
     }
   }
 
@@ -434,7 +638,7 @@ export function Dashboard() {
                                 <button
                                   type="button"
                                   className="icon-btn"
-                                  onClick={() => startEdit(master)}
+                                  onClick={() => startMasterEdit(master)}
                                   aria-label={`Editar ${master.nome}`}
                                   title="Editar"
                                   disabled={busy}
@@ -444,7 +648,7 @@ export function Dashboard() {
                                 <button
                                   type="button"
                                   className="icon-btn"
-                                  onClick={() => void handleInativar(master)}
+                                  onClick={() => void handleMasterInativar(master)}
                                   aria-label={`Inativar ${master.nome}`}
                                   title="Inativar"
                                   disabled={busy || master.stInativo === "S"}
@@ -454,8 +658,163 @@ export function Dashboard() {
                                 <button
                                   type="button"
                                   className="icon-btn danger"
-                                  onClick={() => void handleExcluir(master)}
+                                  onClick={() => void handleMasterExcluir(master)}
                                   aria-label={`Excluir ${master.nome}`}
+                                  title="Excluir"
+                                  disabled={busy}
+                                >
+                                  <IconTrash />
+                                </button>
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {settingsView === "paises" && (
+                <>
+                  <p className="panel-eyebrow">Tabela selecionada</p>
+                  <h3>Paises</h3>
+                  <p>Cadastro e manutencao de paises.</p>
+
+                  <div className="master-tabs" role="tablist" aria-label="Opcoes de Paises">
+                    <button
+                      type="button"
+                      role="tab"
+                      className={`master-tab-btn ${paisTab === "cadastro" ? "active" : ""}`}
+                      aria-selected={paisTab === "cadastro"}
+                      onClick={() => setPaisTab("cadastro")}
+                    >
+                      Cadastro
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      className={`master-tab-btn ${paisTab === "listagem" ? "active" : ""}`}
+                      aria-selected={paisTab === "listagem"}
+                      onClick={() => setPaisTab("listagem")}
+                    >
+                      Listagem
+                    </button>
+                  </div>
+
+                  {paisMessage && <p className="master-feedback">{paisMessage}</p>}
+                  {paisesError && <p className="master-feedback error">{paisesError}</p>}
+
+                  {paisTab === "cadastro" && (
+                    <form className="master-form" onSubmit={handlePaisSubmit}>
+                      <label className="master-field">
+                        Descricao
+                        <input
+                          type="text"
+                          value={paisDescricao}
+                          onChange={(event) => setPaisDescricao(event.target.value)}
+                          maxLength={60}
+                          placeholder="Digite o nome do pais"
+                          aria-invalid={!!paisDescricaoError}
+                          required
+                        />
+                      </label>
+                      {paisDescricaoError && <p className="master-field-error">{paisDescricaoError}</p>}
+
+                      <label className="master-field">
+                        Nacionalidade
+                        <input
+                          type="text"
+                          value={paisNacionalidade}
+                          onChange={(event) => setPaisNacionalidade(event.target.value)}
+                          maxLength={60}
+                          placeholder="Ex.: Brasileira"
+                          aria-invalid={!!paisNacionalidadeError}
+                        />
+                      </label>
+                      {paisNacionalidadeError && <p className="master-field-error">{paisNacionalidadeError}</p>}
+
+                      <label className="master-field">
+                        Codigo IBGE
+                        <input
+                          type="text"
+                          value={paisCdIbge}
+                          onChange={(event) => setPaisCdIbge(event.target.value)}
+                          maxLength={10}
+                          placeholder="Ex.: 76"
+                          aria-invalid={!!paisCdIbgeError}
+                        />
+                      </label>
+                      {paisCdIbgeError && <p className="master-field-error">{paisCdIbgeError}</p>}
+
+                      <div className="master-form-actions">
+                        <button type="submit" className="master-primary-btn" disabled={savingPais}>
+                          {savingPais ? "Salvando..." : editingPaisId ? "Atualizar pais" : "Cadastrar pais"}
+                        </button>
+
+                        {editingPaisId && (
+                          <button
+                            type="button"
+                            className="master-secondary-btn"
+                            onClick={resetPaisForm}
+                            disabled={savingPais}
+                          >
+                            Cancelar edicao
+                          </button>
+                        )}
+                      </div>
+                    </form>
+                  )}
+
+                  {paisTab === "listagem" && (
+                    <div className="master-list-wrap">
+                      <div className="master-list-tools">
+                        <button
+                          type="button"
+                          className="master-secondary-btn"
+                          onClick={() => void fetchPaises()}
+                          disabled={paisesLoading}
+                        >
+                          {paisesLoading ? "Atualizando..." : "Atualizar lista"}
+                        </button>
+                      </div>
+
+                      <div className="master-grid" role="table" aria-label="Paises cadastrados">
+                        <div className="master-grid-row master-grid-head" role="row">
+                          <span role="columnheader">Descricao</span>
+                          <span role="columnheader">Nacionalidade</span>
+                          <span role="columnheader">Codigo IBGE</span>
+                          <span role="columnheader">Acoes</span>
+                        </div>
+
+                        {paises.length === 0 && !paisesLoading && (
+                          <div className="master-grid-empty">Nenhum pais cadastrado.</div>
+                        )}
+
+                        {paises.map((pais) => {
+                          const busy = paisRowActionId === pais.id;
+
+                          return (
+                            <div className="master-grid-row" role="row" key={pais.id}>
+                              <span role="cell">{pais.descricao}</span>
+                              <span role="cell">{pais.nacionalidade ?? "-"}</span>
+                              <span role="cell">{pais.cdIbge ?? "-"}</span>
+                              <span role="cell" className="master-actions">
+                                <button
+                                  type="button"
+                                  className="icon-btn"
+                                  onClick={() => startPaisEdit(pais)}
+                                  aria-label={`Editar ${pais.descricao}`}
+                                  title="Editar"
+                                  disabled={busy}
+                                >
+                                  <IconEdit />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="icon-btn danger"
+                                  onClick={() => void handlePaisExcluir(pais)}
+                                  aria-label={`Excluir ${pais.descricao}`}
                                   title="Excluir"
                                   disabled={busy}
                                 >

@@ -593,3 +593,5 @@ enum RoleAuth {
 
   
 }
+
+// ALTER TABLE public.paises ADD CONSTRAINT paises_cdibge_unique UNIQUE ("cdIbge");

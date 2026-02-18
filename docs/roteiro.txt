@@ -22,6 +22,21 @@ Fluxo correto: desenvolver em src -> rodar npm run build -> publicar/executar di
 
 Só cuide de um ponto: evitar editar dist manualmente, porque qualquer build sobrescreve.
 
+=============================== CONFIGURAÇÃO REMOTA DO Postgres
+
+DATABASE_URL="postgresql://neondb_owner:npg_OWrK9a7iuNIp@ep-purple-grass-accsrtnk.sa-east-1.aws.neon.tech/neondb?sslmode=require&options=-c%20search_path=public"
+JWT_SECRET="adef6b7327840088cbf1be656b29974d5149eb98efecb8df180e51277c07d0f72f1efd13a4892b8c62041ab7046fe2b681fa8b8f0814ac0d5bf8fdab0dbabc86"
+
+jodbc:postegresql:ep-purple-grass-accsrtnk.sa-east-1.aws.neon.tech:5432/neondb
+
+DBeaver:
+Connection by: Host
+host: ep-purple-grass-accsrtnk.sa-east-1.aws.neon.tech
+Port: 5432
+Database: neondb
+Authentication: Username / Password
+Username: neondb_owner
+Password: npg_OWrK9a7iuNIp
 
 
 (base) F:\DEVELOPER_Projects\SRC\Fonte\IBG\cecom_2025>git status
