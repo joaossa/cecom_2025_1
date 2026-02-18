@@ -10,6 +10,8 @@ const paciente_router_1 = __importDefault(require("./modules/pacientes/paciente.
 const profissional_router_1 = __importDefault(require("./modules/profissionais/profissional.router"));
 const master_router_1 = __importDefault(require("./modules/master/master.router"));
 const pais_router_1 = __importDefault(require("./modules/paises/pais.router"));
+const cidade_router_1 = __importDefault(require("./modules/cidades/cidade.router"));
+const unidade_federacao_router_1 = __importDefault(require("./modules/unidades-federacao/unidade-federacao.router"));
 const auth_middleware_1 = require("./modules/auth/auth.middleware");
 // import atendimentoRouter from "./modules/atendimentos/atendimento.router";
 // import sinaisRouter from "./modules/sinais/sinais.router";
@@ -45,6 +47,8 @@ app.use("/pacientes", paciente_router_1.default);
 app.use("/profissionais", profissional_router_1.default);
 app.use("/masters", master_router_1.default);
 app.use("/paises", pais_router_1.default);
+app.use("/cidades", cidade_router_1.default);
+app.use("/unidades-federacao", unidade_federacao_router_1.default);
 // app.use("/atendimentos", atendimentoRouter);
 // app.use("/sinais", sinaisRouter);
 // app.use("/escalas", escalasRouter);

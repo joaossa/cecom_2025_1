@@ -251,19 +251,23 @@ model Pais {
   nacionalidade String?  @db.VarChar(60)
   cdIbge        Int?
   cidades       Cidade[]
+  ufs           UnidadeFederacao[]
 
   @@map("paises")
   
 }
 
 model UnidadeFederacao {
-  id        String   @id @db.Char(2)
-  descricao String   @db.VarChar(60)
-  cdIbge    Int?
-  cidades   Cidade[]
+  id          String   @id @db.Char(2)      // "BA", "SP", etc.
+  descricao   String   @db.VarChar(60)      // "Bahia"
+  cdIbge      Int?                           // código IBGE do estado
+  cdPais      Int
 
+  pais        Pais      @relation(fields: [cdPais], references: [id])
+  cidades     Cidade[]
+
+  @@index([cdPais])
   @@map("unidadesfederacao")
-  
 }
 
 model Cidade {
@@ -280,10 +284,11 @@ model Cidade {
   distritos Distrito[]
   enderecos Endereco[]
 
+  @@unique([descricao, cdUf])
   @@index([cdUf])
   @@index([cdPais])
   @@map("cidades")
-  
+    
 }
 
 model Escolaridade {

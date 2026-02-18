@@ -4,9 +4,11 @@ import { api } from "../services/api";
 import "./Dashboard.css";
 
 type MainView = "inicio" | "configuracoes";
-type SettingsView = "master" | "paises" | "pacientes" | "profissionais" | "usuarios";
+type SettingsView = "master" | "paises" | "ufs" | "cidades" | "pacientes" | "profissionais" | "usuarios";
 type MasterTab = "cadastro" | "listagem";
 type PaisTab = "cadastro" | "listagem";
+type UfTab = "cadastro" | "listagem";
+type CidadeTab = "cadastro" | "listagem";
 type SimNao = "S" | "N";
 
 interface MasterItem {
@@ -23,8 +25,25 @@ interface PaisItem {
   cdIbge: number | null;
 }
 
+interface UnidadeFederacaoItem {
+  id: string;
+  descricao: string;
+  cdIbge: number | null;
+  cdPais: number;
+}
+
+interface CidadeItem {
+  id: number;
+  descricao: string;
+  cdUf: string;
+  cdPais: number;
+  cepGeral: string | null;
+  cdIbge: number | null;
+}
+
 const masterNomeRegex = /^[\p{L}\p{N} ]+$/u;
 const paisTextoRegex = /^[\p{L}\p{N} ]+$/u;
+const ufCodigoRegex = /^[A-Za-z]{2}$/;
 
 function IconEdit() {
   return (
@@ -84,10 +103,50 @@ export function Dashboard() {
   const [savingPais, setSavingPais] = useState(false);
   const [paisRowActionId, setPaisRowActionId] = useState<number | null>(null);
 
+  const [ufTab, setUfTab] = useState<UfTab>("cadastro");
+  const [ufs, setUfs] = useState<UnidadeFederacaoItem[]>([]);
+  const [ufsLoading, setUfsLoading] = useState(false);
+  const [ufsError, setUfsError] = useState<string | null>(null);
+
+  const [ufId, setUfId] = useState("");
+  const [ufDescricao, setUfDescricao] = useState("");
+  const [ufCdIbge, setUfCdIbge] = useState("");
+  const [ufCdPais, setUfCdPais] = useState("");
+  const [editingUfId, setEditingUfId] = useState<string | null>(null);
+  const [ufIdError, setUfIdError] = useState<string | null>(null);
+  const [ufDescricaoError, setUfDescricaoError] = useState<string | null>(null);
+  const [ufCdIbgeError, setUfCdIbgeError] = useState<string | null>(null);
+  const [ufCdPaisError, setUfCdPaisError] = useState<string | null>(null);
+  const [ufMessage, setUfMessage] = useState<string | null>(null);
+  const [savingUf, setSavingUf] = useState(false);
+  const [ufRowActionId, setUfRowActionId] = useState<string | null>(null);
+
+  const [cidadeTab, setCidadeTab] = useState<CidadeTab>("cadastro");
+  const [cidades, setCidades] = useState<CidadeItem[]>([]);
+  const [cidadesLoading, setCidadesLoading] = useState(false);
+  const [cidadesError, setCidadesError] = useState<string | null>(null);
+
+  const [cidadeDescricao, setCidadeDescricao] = useState("");
+  const [cidadeCdUf, setCidadeCdUf] = useState("");
+  const [cidadeCdPais, setCidadeCdPais] = useState("");
+  const [cidadeCepGeral, setCidadeCepGeral] = useState("");
+  const [cidadeCdIbge, setCidadeCdIbge] = useState("");
+  const [editingCidadeId, setEditingCidadeId] = useState<number | null>(null);
+  const [cidadeDescricaoError, setCidadeDescricaoError] = useState<string | null>(null);
+  const [cidadeCdUfError, setCidadeCdUfError] = useState<string | null>(null);
+  const [cidadeCdPaisError, setCidadeCdPaisError] = useState<string | null>(null);
+  const [cidadeCepGeralError, setCidadeCepGeralError] = useState<string | null>(null);
+  const [cidadeCdIbgeError, setCidadeCdIbgeError] = useState<string | null>(null);
+  const [cidadeMessage, setCidadeMessage] = useState<string | null>(null);
+  const [savingCidade, setSavingCidade] = useState(false);
+  const [cidadeRowActionId, setCidadeRowActionId] = useState<number | null>(null);
+
   const settingsItems = useMemo(
     () => [
       { id: "master" as const, label: "Master", subtitle: "Organizacoes" },
       { id: "paises" as const, label: "Paises", subtitle: "Tabela basica" },
+      { id: "ufs" as const, label: "UF", subtitle: "Unidades federativas" },
+      { id: "cidades" as const, label: "Cidades", subtitle: "Tabela basica" },
       { id: "pacientes" as const, label: "Pacientes", subtitle: "Cadastro base" },
       { id: "profissionais" as const, label: "Profissionais", subtitle: "Cadastro base" },
       { id: "usuarios" as const, label: "Usuarios", subtitle: "Acesso e perfil" },
@@ -131,6 +190,42 @@ export function Dashboard() {
     }
   }, []);
 
+  const fetchUfs = useCallback(async () => {
+    setUfsLoading(true);
+    setUfsError(null);
+
+    try {
+      const response = await api.get<UnidadeFederacaoItem[]>("/unidades-federacao");
+      setUfs(response.data);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel listar as UFs.";
+      setUfsError(message);
+    } finally {
+      setUfsLoading(false);
+    }
+  }, []);
+
+  const fetchCidades = useCallback(async () => {
+    setCidadesLoading(true);
+    setCidadesError(null);
+
+    try {
+      const response = await api.get<CidadeItem[]>("/cidades");
+      setCidades(response.data);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel listar as cidades.";
+      setCidadesError(message);
+    } finally {
+      setCidadesLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (mainView === "configuracoes" && settingsView === "master") {
       void fetchMasters();
@@ -142,6 +237,18 @@ export function Dashboard() {
       void fetchPaises();
     }
   }, [fetchPaises, mainView, settingsView]);
+
+  useEffect(() => {
+    if (mainView === "configuracoes" && settingsView === "ufs") {
+      void fetchUfs();
+    }
+  }, [fetchUfs, mainView, settingsView]);
+
+  useEffect(() => {
+    if (mainView === "configuracoes" && settingsView === "cidades") {
+      void fetchCidades();
+    }
+  }, [fetchCidades, mainView, settingsView]);
 
   function validateMasterNome(nome: string) {
     const trimmed = nome.trim();
@@ -216,6 +323,115 @@ export function Dashboard() {
     return null;
   }
 
+  function validateUfId(value: string) {
+    const trimmed = value.trim();
+
+    if (trimmed.length === 0) {
+      return "Informe a sigla da UF.";
+    }
+
+    if (!ufCodigoRegex.test(trimmed)) {
+      return "A sigla da UF deve conter exatamente 2 letras.";
+    }
+
+    return null;
+  }
+
+  function validateUfDescricao(value: string) {
+    const trimmed = value.trim();
+
+    if (trimmed.length === 0) {
+      return "Informe a descricao da UF.";
+    }
+
+    if (trimmed.length > 60) {
+      return "A descricao deve ter no maximo 60 caracteres.";
+    }
+
+    if (!paisTextoRegex.test(trimmed)) {
+      return "Use apenas caracteres alfanumericos e espacos.";
+    }
+
+    return null;
+  }
+
+  function validateUfCdIbge(value: string) {
+    return validatePaisCdIbge(value);
+  }
+
+  function validateUfCdPais(value: string) {
+    const trimmed = value.trim();
+
+    if (trimmed.length === 0) {
+      return "Informe o codigo do pais.";
+    }
+
+    if (!/^\d+$/.test(trimmed)) {
+      return "O codigo do pais deve ser numerico.";
+    }
+
+    const parsed = Number(trimmed);
+    if (!Number.isInteger(parsed) || parsed <= 0) {
+      return "O codigo do pais deve ser um inteiro positivo.";
+    }
+
+    return null;
+  }
+
+  function validateCidadeDescricao(value: string) {
+    const trimmed = value.trim();
+
+    if (trimmed.length === 0) {
+      return "Informe a descricao da cidade.";
+    }
+
+    if (trimmed.length > 120) {
+      return "A descricao deve ter no maximo 120 caracteres.";
+    }
+
+    if (!paisTextoRegex.test(trimmed)) {
+      return "Use apenas caracteres alfanumericos e espacos.";
+    }
+
+    return null;
+  }
+
+  function validateCidadeCdUf(value: string) {
+    const trimmed = value.trim();
+
+    if (trimmed.length === 0) {
+      return "Informe a UF da cidade.";
+    }
+
+    if (!ufCodigoRegex.test(trimmed)) {
+      return "A UF deve conter exatamente 2 letras.";
+    }
+
+    return null;
+  }
+
+  function validateCidadeCdPais(value: string) {
+    return validateUfCdPais(value);
+  }
+
+  function validateCidadeCepGeral(value: string) {
+    const trimmed = value.trim();
+
+    if (trimmed.length === 0) {
+      return null;
+    }
+
+    if (!/^\d{5}-?\d{3}$/.test(trimmed)) {
+      return "Informe o CEP no formato 99999-999.";
+    }
+
+    return null;
+  }
+
+  function validateCidadeCdIbge(value: string) {
+    return validatePaisCdIbge(value);
+  }
+
   function resetMasterForm() {
     setMasterNome("");
     setMasterInativo(false);
@@ -231,6 +447,32 @@ export function Dashboard() {
     setPaisDescricaoError(null);
     setPaisNacionalidadeError(null);
     setPaisCdIbgeError(null);
+  }
+
+  function resetUfForm() {
+    setUfId("");
+    setUfDescricao("");
+    setUfCdIbge("");
+    setUfCdPais("");
+    setEditingUfId(null);
+    setUfIdError(null);
+    setUfDescricaoError(null);
+    setUfCdIbgeError(null);
+    setUfCdPaisError(null);
+  }
+
+  function resetCidadeForm() {
+    setCidadeDescricao("");
+    setCidadeCdUf("");
+    setCidadeCdPais("");
+    setCidadeCepGeral("");
+    setCidadeCdIbge("");
+    setEditingCidadeId(null);
+    setCidadeDescricaoError(null);
+    setCidadeCdUfError(null);
+    setCidadeCdPaisError(null);
+    setCidadeCepGeralError(null);
+    setCidadeCdIbgeError(null);
   }
 
   function startMasterEdit(master: MasterItem) {
@@ -252,6 +494,36 @@ export function Dashboard() {
     setPaisCdIbgeError(null);
     setPaisMessage(null);
     setPaisTab("cadastro");
+  }
+
+  function startUfEdit(uf: UnidadeFederacaoItem) {
+    setEditingUfId(uf.id);
+    setUfId(uf.id);
+    setUfDescricao(uf.descricao);
+    setUfCdIbge(uf.cdIbge !== null ? String(uf.cdIbge) : "");
+    setUfCdPais(String(uf.cdPais));
+    setUfIdError(null);
+    setUfDescricaoError(null);
+    setUfCdIbgeError(null);
+    setUfCdPaisError(null);
+    setUfMessage(null);
+    setUfTab("cadastro");
+  }
+
+  function startCidadeEdit(cidade: CidadeItem) {
+    setEditingCidadeId(cidade.id);
+    setCidadeDescricao(cidade.descricao);
+    setCidadeCdUf(cidade.cdUf);
+    setCidadeCdPais(String(cidade.cdPais));
+    setCidadeCepGeral(cidade.cepGeral ?? "");
+    setCidadeCdIbge(cidade.cdIbge !== null ? String(cidade.cdIbge) : "");
+    setCidadeDescricaoError(null);
+    setCidadeCdUfError(null);
+    setCidadeCdPaisError(null);
+    setCidadeCepGeralError(null);
+    setCidadeCdIbgeError(null);
+    setCidadeMessage(null);
+    setCidadeTab("cadastro");
   }
 
   async function handleMasterSubmit(event: FormEvent<HTMLFormElement>) {
@@ -342,6 +614,111 @@ export function Dashboard() {
     }
   }
 
+  async function handleUfSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const idError = editingUfId ? null : validateUfId(ufId);
+    const descricaoError = validateUfDescricao(ufDescricao);
+    const cdIbgeError = validateUfCdIbge(ufCdIbge);
+    const cdPaisError = validateUfCdPais(ufCdPais);
+
+    setUfIdError(idError);
+    setUfDescricaoError(descricaoError);
+    setUfCdIbgeError(cdIbgeError);
+    setUfCdPaisError(cdPaisError);
+
+    if (idError || descricaoError || cdIbgeError || cdPaisError) {
+      return;
+    }
+
+    setSavingUf(true);
+    setUfMessage(null);
+
+    const payload = {
+      descricao: ufDescricao.trim(),
+      cdIbge: ufCdIbge.trim().length > 0 ? Number(ufCdIbge) : null,
+      cdPais: Number(ufCdPais),
+    };
+
+    try {
+      if (editingUfId) {
+        await api.put(`/unidades-federacao/${editingUfId}`, payload);
+        setUfMessage("UF atualizada com sucesso.");
+      } else {
+        await api.post("/unidades-federacao", {
+          id: ufId.trim().toUpperCase(),
+          ...payload,
+        });
+        setUfMessage("UF cadastrada com sucesso.");
+      }
+
+      resetUfForm();
+      setUfTab("listagem");
+      await fetchUfs();
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel salvar a UF.";
+      setUfMessage(message);
+    } finally {
+      setSavingUf(false);
+    }
+  }
+
+  async function handleCidadeSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const descricaoError = validateCidadeDescricao(cidadeDescricao);
+    const cdUfError = validateCidadeCdUf(cidadeCdUf);
+    const cdPaisError = validateCidadeCdPais(cidadeCdPais);
+    const cepGeralError = validateCidadeCepGeral(cidadeCepGeral);
+    const cdIbgeError = validateCidadeCdIbge(cidadeCdIbge);
+
+    setCidadeDescricaoError(descricaoError);
+    setCidadeCdUfError(cdUfError);
+    setCidadeCdPaisError(cdPaisError);
+    setCidadeCepGeralError(cepGeralError);
+    setCidadeCdIbgeError(cdIbgeError);
+
+    if (descricaoError || cdUfError || cdPaisError || cepGeralError || cdIbgeError) {
+      return;
+    }
+
+    setSavingCidade(true);
+    setCidadeMessage(null);
+
+    const payload = {
+      descricao: cidadeDescricao.trim(),
+      cdUf: cidadeCdUf.trim().toUpperCase(),
+      cdPais: Number(cidadeCdPais),
+      cepGeral: cidadeCepGeral.trim().length > 0 ? cidadeCepGeral.trim() : null,
+      cdIbge: cidadeCdIbge.trim().length > 0 ? Number(cidadeCdIbge) : null,
+    };
+
+    try {
+      if (editingCidadeId) {
+        await api.put(`/cidades/${editingCidadeId}`, payload);
+        setCidadeMessage("Cidade atualizada com sucesso.");
+      } else {
+        await api.post("/cidades", payload);
+        setCidadeMessage("Cidade cadastrada com sucesso.");
+      }
+
+      resetCidadeForm();
+      setCidadeTab("listagem");
+      await fetchCidades();
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel salvar a cidade.";
+      setCidadeMessage(message);
+    } finally {
+      setSavingCidade(false);
+    }
+  }
+
   async function handleMasterInativar(master: MasterItem) {
     if (master.stInativo === "S") {
       return;
@@ -422,6 +799,66 @@ export function Dashboard() {
       setPaisMessage(message);
     } finally {
       setPaisRowActionId(null);
+    }
+  }
+
+  async function handleUfExcluir(uf: UnidadeFederacaoItem) {
+    const confirmed = window.confirm(`Excluir a UF '${uf.id} - ${uf.descricao}'?`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    setUfRowActionId(uf.id);
+    setUfMessage(null);
+
+    try {
+      await api.delete(`/unidades-federacao/${uf.id}`);
+      setUfMessage("UF excluida com sucesso.");
+
+      if (editingUfId === uf.id) {
+        resetUfForm();
+      }
+
+      await fetchUfs();
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel excluir a UF.";
+      setUfMessage(message);
+    } finally {
+      setUfRowActionId(null);
+    }
+  }
+
+  async function handleCidadeExcluir(cidade: CidadeItem) {
+    const confirmed = window.confirm(`Excluir a cidade '${cidade.descricao}'?`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    setCidadeRowActionId(cidade.id);
+    setCidadeMessage(null);
+
+    try {
+      await api.delete(`/cidades/${cidade.id}`);
+      setCidadeMessage("Cidade excluida com sucesso.");
+
+      if (editingCidadeId === cidade.id) {
+        resetCidadeForm();
+      }
+
+      await fetchCidades();
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel excluir a cidade.";
+      setCidadeMessage(message);
+    } finally {
+      setCidadeRowActionId(null);
     }
   }
 
@@ -815,6 +1252,364 @@ export function Dashboard() {
                                   className="icon-btn danger"
                                   onClick={() => void handlePaisExcluir(pais)}
                                   aria-label={`Excluir ${pais.descricao}`}
+                                  title="Excluir"
+                                  disabled={busy}
+                                >
+                                  <IconTrash />
+                                </button>
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {settingsView === "ufs" && (
+                <>
+                  <p className="panel-eyebrow">Tabela selecionada</p>
+                  <h3>Unidades Federativas</h3>
+                  <p>Cadastro e manutencao de unidades federativas.</p>
+
+                  <div className="master-tabs" role="tablist" aria-label="Opcoes de UF">
+                    <button
+                      type="button"
+                      role="tab"
+                      className={`master-tab-btn ${ufTab === "cadastro" ? "active" : ""}`}
+                      aria-selected={ufTab === "cadastro"}
+                      onClick={() => setUfTab("cadastro")}
+                    >
+                      Cadastro
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      className={`master-tab-btn ${ufTab === "listagem" ? "active" : ""}`}
+                      aria-selected={ufTab === "listagem"}
+                      onClick={() => setUfTab("listagem")}
+                    >
+                      Listagem
+                    </button>
+                  </div>
+
+                  {ufMessage && <p className="master-feedback">{ufMessage}</p>}
+                  {ufsError && <p className="master-feedback error">{ufsError}</p>}
+
+                  {ufTab === "cadastro" && (
+                    <form className="master-form" onSubmit={handleUfSubmit}>
+                      <label className="master-field">
+                        Sigla da UF
+                        <input
+                          type="text"
+                          value={ufId}
+                          onChange={(event) => setUfId(event.target.value.toUpperCase())}
+                          maxLength={2}
+                          placeholder="Ex.: BA"
+                          aria-invalid={!!ufIdError}
+                          disabled={!!editingUfId}
+                          required
+                        />
+                      </label>
+                      {ufIdError && <p className="master-field-error">{ufIdError}</p>}
+
+                      <label className="master-field">
+                        Descricao
+                        <input
+                          type="text"
+                          value={ufDescricao}
+                          onChange={(event) => setUfDescricao(event.target.value)}
+                          maxLength={60}
+                          placeholder="Ex.: Bahia"
+                          aria-invalid={!!ufDescricaoError}
+                          required
+                        />
+                      </label>
+                      {ufDescricaoError && <p className="master-field-error">{ufDescricaoError}</p>}
+
+                      <label className="master-field">
+                        Codigo IBGE
+                        <input
+                          type="text"
+                          value={ufCdIbge}
+                          onChange={(event) => setUfCdIbge(event.target.value)}
+                          maxLength={10}
+                          placeholder="Ex.: 29"
+                          aria-invalid={!!ufCdIbgeError}
+                        />
+                      </label>
+                      {ufCdIbgeError && <p className="master-field-error">{ufCdIbgeError}</p>}
+
+                      <label className="master-field">
+                        Codigo do Pais
+                        <input
+                          type="text"
+                          value={ufCdPais}
+                          onChange={(event) => setUfCdPais(event.target.value)}
+                          maxLength={10}
+                          placeholder="Ex.: 76"
+                          aria-invalid={!!ufCdPaisError}
+                          required
+                        />
+                      </label>
+                      {ufCdPaisError && <p className="master-field-error">{ufCdPaisError}</p>}
+
+                      <div className="master-form-actions">
+                        <button type="submit" className="master-primary-btn" disabled={savingUf}>
+                          {savingUf ? "Salvando..." : editingUfId ? "Atualizar UF" : "Cadastrar UF"}
+                        </button>
+
+                        {editingUfId && (
+                          <button
+                            type="button"
+                            className="master-secondary-btn"
+                            onClick={resetUfForm}
+                            disabled={savingUf}
+                          >
+                            Cancelar edicao
+                          </button>
+                        )}
+                      </div>
+                    </form>
+                  )}
+
+                  {ufTab === "listagem" && (
+                    <div className="master-list-wrap">
+                      <div className="master-list-tools">
+                        <button
+                          type="button"
+                          className="master-secondary-btn"
+                          onClick={() => void fetchUfs()}
+                          disabled={ufsLoading}
+                        >
+                          {ufsLoading ? "Atualizando..." : "Atualizar lista"}
+                        </button>
+                      </div>
+
+                      <div className="master-grid" role="table" aria-label="UFs cadastradas">
+                        <div className="master-grid-row master-grid-head" role="row">
+                          <span role="columnheader">UF</span>
+                          <span role="columnheader">Descricao</span>
+                          <span role="columnheader">Codigo IBGE</span>
+                          <span role="columnheader">Codigo Pais</span>
+                          <span role="columnheader">Acoes</span>
+                        </div>
+
+                        {ufs.length === 0 && !ufsLoading && <div className="master-grid-empty">Nenhuma UF cadastrada.</div>}
+
+                        {ufs.map((uf) => {
+                          const busy = ufRowActionId === uf.id;
+
+                          return (
+                            <div className="master-grid-row" role="row" key={uf.id}>
+                              <span role="cell">{uf.id}</span>
+                              <span role="cell">{uf.descricao}</span>
+                              <span role="cell">{uf.cdIbge ?? "-"}</span>
+                              <span role="cell">{uf.cdPais}</span>
+                              <span role="cell" className="master-actions">
+                                <button
+                                  type="button"
+                                  className="icon-btn"
+                                  onClick={() => startUfEdit(uf)}
+                                  aria-label={`Editar ${uf.id}`}
+                                  title="Editar"
+                                  disabled={busy}
+                                >
+                                  <IconEdit />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="icon-btn danger"
+                                  onClick={() => void handleUfExcluir(uf)}
+                                  aria-label={`Excluir ${uf.id}`}
+                                  title="Excluir"
+                                  disabled={busy}
+                                >
+                                  <IconTrash />
+                                </button>
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {settingsView === "cidades" && (
+                <>
+                  <p className="panel-eyebrow">Tabela selecionada</p>
+                  <h3>Cidades</h3>
+                  <p>Cadastro e manutencao de cidades.</p>
+
+                  <div className="master-tabs" role="tablist" aria-label="Opcoes de Cidades">
+                    <button
+                      type="button"
+                      role="tab"
+                      className={`master-tab-btn ${cidadeTab === "cadastro" ? "active" : ""}`}
+                      aria-selected={cidadeTab === "cadastro"}
+                      onClick={() => setCidadeTab("cadastro")}
+                    >
+                      Cadastro
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      className={`master-tab-btn ${cidadeTab === "listagem" ? "active" : ""}`}
+                      aria-selected={cidadeTab === "listagem"}
+                      onClick={() => setCidadeTab("listagem")}
+                    >
+                      Listagem
+                    </button>
+                  </div>
+
+                  {cidadeMessage && <p className="master-feedback">{cidadeMessage}</p>}
+                  {cidadesError && <p className="master-feedback error">{cidadesError}</p>}
+
+                  {cidadeTab === "cadastro" && (
+                    <form className="master-form" onSubmit={handleCidadeSubmit}>
+                      <label className="master-field">
+                        Descricao
+                        <input
+                          type="text"
+                          value={cidadeDescricao}
+                          onChange={(event) => setCidadeDescricao(event.target.value)}
+                          maxLength={120}
+                          placeholder="Ex.: Salvador"
+                          aria-invalid={!!cidadeDescricaoError}
+                          required
+                        />
+                      </label>
+                      {cidadeDescricaoError && <p className="master-field-error">{cidadeDescricaoError}</p>}
+
+                      <label className="master-field">
+                        UF
+                        <input
+                          type="text"
+                          value={cidadeCdUf}
+                          onChange={(event) => setCidadeCdUf(event.target.value.toUpperCase())}
+                          maxLength={2}
+                          placeholder="Ex.: BA"
+                          aria-invalid={!!cidadeCdUfError}
+                          required
+                        />
+                      </label>
+                      {cidadeCdUfError && <p className="master-field-error">{cidadeCdUfError}</p>}
+
+                      <label className="master-field">
+                        Codigo do Pais
+                        <input
+                          type="text"
+                          value={cidadeCdPais}
+                          onChange={(event) => setCidadeCdPais(event.target.value)}
+                          maxLength={10}
+                          placeholder="Ex.: 76"
+                          aria-invalid={!!cidadeCdPaisError}
+                          required
+                        />
+                      </label>
+                      {cidadeCdPaisError && <p className="master-field-error">{cidadeCdPaisError}</p>}
+
+                      <label className="master-field">
+                        CEP Geral
+                        <input
+                          type="text"
+                          value={cidadeCepGeral}
+                          onChange={(event) => setCidadeCepGeral(event.target.value)}
+                          maxLength={9}
+                          placeholder="Ex.: 40000-000"
+                          aria-invalid={!!cidadeCepGeralError}
+                        />
+                      </label>
+                      {cidadeCepGeralError && <p className="master-field-error">{cidadeCepGeralError}</p>}
+
+                      <label className="master-field">
+                        Codigo IBGE
+                        <input
+                          type="text"
+                          value={cidadeCdIbge}
+                          onChange={(event) => setCidadeCdIbge(event.target.value)}
+                          maxLength={10}
+                          placeholder="Ex.: 2927408"
+                          aria-invalid={!!cidadeCdIbgeError}
+                        />
+                      </label>
+                      {cidadeCdIbgeError && <p className="master-field-error">{cidadeCdIbgeError}</p>}
+
+                      <div className="master-form-actions">
+                        <button type="submit" className="master-primary-btn" disabled={savingCidade}>
+                          {savingCidade ? "Salvando..." : editingCidadeId ? "Atualizar cidade" : "Cadastrar cidade"}
+                        </button>
+
+                        {editingCidadeId && (
+                          <button
+                            type="button"
+                            className="master-secondary-btn"
+                            onClick={resetCidadeForm}
+                            disabled={savingCidade}
+                          >
+                            Cancelar edicao
+                          </button>
+                        )}
+                      </div>
+                    </form>
+                  )}
+
+                  {cidadeTab === "listagem" && (
+                    <div className="master-list-wrap">
+                      <div className="master-list-tools">
+                        <button
+                          type="button"
+                          className="master-secondary-btn"
+                          onClick={() => void fetchCidades()}
+                          disabled={cidadesLoading}
+                        >
+                          {cidadesLoading ? "Atualizando..." : "Atualizar lista"}
+                        </button>
+                      </div>
+
+                      <div className="master-grid" role="table" aria-label="Cidades cadastradas">
+                        <div className="master-grid-row master-grid-head" role="row">
+                          <span role="columnheader">Descricao</span>
+                          <span role="columnheader">UF</span>
+                          <span role="columnheader">Pais</span>
+                          <span role="columnheader">CEP Geral</span>
+                          <span role="columnheader">Codigo IBGE</span>
+                          <span role="columnheader">Acoes</span>
+                        </div>
+
+                        {cidades.length === 0 && !cidadesLoading && (
+                          <div className="master-grid-empty">Nenhuma cidade cadastrada.</div>
+                        )}
+
+                        {cidades.map((cidade) => {
+                          const busy = cidadeRowActionId === cidade.id;
+
+                          return (
+                            <div className="master-grid-row" role="row" key={cidade.id}>
+                              <span role="cell">{cidade.descricao}</span>
+                              <span role="cell">{cidade.cdUf}</span>
+                              <span role="cell">{cidade.cdPais}</span>
+                              <span role="cell">{cidade.cepGeral ?? "-"}</span>
+                              <span role="cell">{cidade.cdIbge ?? "-"}</span>
+                              <span role="cell" className="master-actions">
+                                <button
+                                  type="button"
+                                  className="icon-btn"
+                                  onClick={() => startCidadeEdit(cidade)}
+                                  aria-label={`Editar ${cidade.descricao}`}
+                                  title="Editar"
+                                  disabled={busy}
+                                >
+                                  <IconEdit />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="icon-btn danger"
+                                  onClick={() => void handleCidadeExcluir(cidade)}
+                                  aria-label={`Excluir ${cidade.descricao}`}
                                   title="Excluir"
                                   disabled={busy}
                                 >

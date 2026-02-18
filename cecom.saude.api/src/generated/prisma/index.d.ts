@@ -4645,10 +4645,12 @@ export namespace Prisma {
 
   export type PaisCountOutputType = {
     cidades: number
+    ufs: number
   }
 
   export type PaisCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cidades?: boolean | PaisCountOutputTypeCountCidadesArgs
+    ufs?: boolean | PaisCountOutputTypeCountUfsArgs
   }
 
   // Custom InputTypes
@@ -4667,6 +4669,13 @@ export namespace Prisma {
    */
   export type PaisCountOutputTypeCountCidadesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CidadeWhereInput
+  }
+
+  /**
+   * PaisCountOutputType without action
+   */
+  export type PaisCountOutputTypeCountUfsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UnidadeFederacaoWhereInput
   }
 
 
@@ -24613,6 +24622,7 @@ export namespace Prisma {
     nacionalidade?: boolean
     cdIbge?: boolean
     cidades?: boolean | Pais$cidadesArgs<ExtArgs>
+    ufs?: boolean | Pais$ufsArgs<ExtArgs>
     _count?: boolean | PaisCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pais"]>
 
@@ -24640,6 +24650,7 @@ export namespace Prisma {
   export type PaisOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "descricao" | "nacionalidade" | "cdIbge", ExtArgs["result"]["pais"]>
   export type PaisInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cidades?: boolean | Pais$cidadesArgs<ExtArgs>
+    ufs?: boolean | Pais$ufsArgs<ExtArgs>
     _count?: boolean | PaisCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PaisIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -24649,6 +24660,7 @@ export namespace Prisma {
     name: "Pais"
     objects: {
       cidades: Prisma.$CidadePayload<ExtArgs>[]
+      ufs: Prisma.$UnidadeFederacaoPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -25050,6 +25062,7 @@ export namespace Prisma {
   export interface Prisma__PaisClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     cidades<T extends Pais$cidadesArgs<ExtArgs> = {}>(args?: Subset<T, Pais$cidadesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CidadePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    ufs<T extends Pais$ufsArgs<ExtArgs> = {}>(args?: Subset<T, Pais$ufsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UnidadeFederacaoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -25495,6 +25508,30 @@ export namespace Prisma {
   }
 
   /**
+   * Pais.ufs
+   */
+  export type Pais$ufsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UnidadeFederacao
+     */
+    select?: UnidadeFederacaoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UnidadeFederacao
+     */
+    omit?: UnidadeFederacaoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UnidadeFederacaoInclude<ExtArgs> | null
+    where?: UnidadeFederacaoWhereInput
+    orderBy?: UnidadeFederacaoOrderByWithRelationInput | UnidadeFederacaoOrderByWithRelationInput[]
+    cursor?: UnidadeFederacaoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UnidadeFederacaoScalarFieldEnum | UnidadeFederacaoScalarFieldEnum[]
+  }
+
+  /**
    * Pais without action
    */
   export type PaisDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -25527,56 +25564,66 @@ export namespace Prisma {
 
   export type UnidadeFederacaoAvgAggregateOutputType = {
     cdIbge: number | null
+    cdPais: number | null
   }
 
   export type UnidadeFederacaoSumAggregateOutputType = {
     cdIbge: number | null
+    cdPais: number | null
   }
 
   export type UnidadeFederacaoMinAggregateOutputType = {
     id: string | null
     descricao: string | null
     cdIbge: number | null
+    cdPais: number | null
   }
 
   export type UnidadeFederacaoMaxAggregateOutputType = {
     id: string | null
     descricao: string | null
     cdIbge: number | null
+    cdPais: number | null
   }
 
   export type UnidadeFederacaoCountAggregateOutputType = {
     id: number
     descricao: number
     cdIbge: number
+    cdPais: number
     _all: number
   }
 
 
   export type UnidadeFederacaoAvgAggregateInputType = {
     cdIbge?: true
+    cdPais?: true
   }
 
   export type UnidadeFederacaoSumAggregateInputType = {
     cdIbge?: true
+    cdPais?: true
   }
 
   export type UnidadeFederacaoMinAggregateInputType = {
     id?: true
     descricao?: true
     cdIbge?: true
+    cdPais?: true
   }
 
   export type UnidadeFederacaoMaxAggregateInputType = {
     id?: true
     descricao?: true
     cdIbge?: true
+    cdPais?: true
   }
 
   export type UnidadeFederacaoCountAggregateInputType = {
     id?: true
     descricao?: true
     cdIbge?: true
+    cdPais?: true
     _all?: true
   }
 
@@ -25670,6 +25717,7 @@ export namespace Prisma {
     id: string
     descricao: string
     cdIbge: number | null
+    cdPais: number
     _count: UnidadeFederacaoCountAggregateOutputType | null
     _avg: UnidadeFederacaoAvgAggregateOutputType | null
     _sum: UnidadeFederacaoSumAggregateOutputType | null
@@ -25695,6 +25743,8 @@ export namespace Prisma {
     id?: boolean
     descricao?: boolean
     cdIbge?: boolean
+    cdPais?: boolean
+    pais?: boolean | PaisDefaultArgs<ExtArgs>
     cidades?: boolean | UnidadeFederacao$cidadesArgs<ExtArgs>
     _count?: boolean | UnidadeFederacaoCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["unidadeFederacao"]>
@@ -25703,37 +25753,49 @@ export namespace Prisma {
     id?: boolean
     descricao?: boolean
     cdIbge?: boolean
+    cdPais?: boolean
+    pais?: boolean | PaisDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["unidadeFederacao"]>
 
   export type UnidadeFederacaoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     descricao?: boolean
     cdIbge?: boolean
+    cdPais?: boolean
+    pais?: boolean | PaisDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["unidadeFederacao"]>
 
   export type UnidadeFederacaoSelectScalar = {
     id?: boolean
     descricao?: boolean
     cdIbge?: boolean
+    cdPais?: boolean
   }
 
-  export type UnidadeFederacaoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "descricao" | "cdIbge", ExtArgs["result"]["unidadeFederacao"]>
+  export type UnidadeFederacaoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "descricao" | "cdIbge" | "cdPais", ExtArgs["result"]["unidadeFederacao"]>
   export type UnidadeFederacaoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pais?: boolean | PaisDefaultArgs<ExtArgs>
     cidades?: boolean | UnidadeFederacao$cidadesArgs<ExtArgs>
     _count?: boolean | UnidadeFederacaoCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type UnidadeFederacaoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type UnidadeFederacaoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type UnidadeFederacaoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pais?: boolean | PaisDefaultArgs<ExtArgs>
+  }
+  export type UnidadeFederacaoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    pais?: boolean | PaisDefaultArgs<ExtArgs>
+  }
 
   export type $UnidadeFederacaoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "UnidadeFederacao"
     objects: {
+      pais: Prisma.$PaisPayload<ExtArgs>
       cidades: Prisma.$CidadePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       descricao: string
       cdIbge: number | null
+      cdPais: number
     }, ExtArgs["result"]["unidadeFederacao"]>
     composites: {}
   }
@@ -26128,6 +26190,7 @@ export namespace Prisma {
    */
   export interface Prisma__UnidadeFederacaoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    pais<T extends PaisDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PaisDefaultArgs<ExtArgs>>): Prisma__PaisClient<$Result.GetResult<Prisma.$PaisPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     cidades<T extends UnidadeFederacao$cidadesArgs<ExtArgs> = {}>(args?: Subset<T, UnidadeFederacao$cidadesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CidadePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -26161,6 +26224,7 @@ export namespace Prisma {
     readonly id: FieldRef<"UnidadeFederacao", 'String'>
     readonly descricao: FieldRef<"UnidadeFederacao", 'String'>
     readonly cdIbge: FieldRef<"UnidadeFederacao", 'Int'>
+    readonly cdPais: FieldRef<"UnidadeFederacao", 'Int'>
   }
     
 
@@ -26410,6 +26474,10 @@ export namespace Prisma {
      */
     data: UnidadeFederacaoCreateManyInput | UnidadeFederacaoCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UnidadeFederacaoIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -26480,6 +26548,10 @@ export namespace Prisma {
      * Limit how many UnidadeFederacaos to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UnidadeFederacaoIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -46083,7 +46155,8 @@ export namespace Prisma {
   export const UnidadeFederacaoScalarFieldEnum: {
     id: 'id',
     descricao: 'descricao',
-    cdIbge: 'cdIbge'
+    cdIbge: 'cdIbge',
+    cdPais: 'cdPais'
   };
 
   export type UnidadeFederacaoScalarFieldEnum = (typeof UnidadeFederacaoScalarFieldEnum)[keyof typeof UnidadeFederacaoScalarFieldEnum]
@@ -47608,6 +47681,7 @@ export namespace Prisma {
     nacionalidade?: StringNullableFilter<"Pais"> | string | null
     cdIbge?: IntNullableFilter<"Pais"> | number | null
     cidades?: CidadeListRelationFilter
+    ufs?: UnidadeFederacaoListRelationFilter
   }
 
   export type PaisOrderByWithRelationInput = {
@@ -47616,6 +47690,7 @@ export namespace Prisma {
     nacionalidade?: SortOrderInput | SortOrder
     cdIbge?: SortOrderInput | SortOrder
     cidades?: CidadeOrderByRelationAggregateInput
+    ufs?: UnidadeFederacaoOrderByRelationAggregateInput
   }
 
   export type PaisWhereUniqueInput = Prisma.AtLeast<{
@@ -47627,6 +47702,7 @@ export namespace Prisma {
     nacionalidade?: StringNullableFilter<"Pais"> | string | null
     cdIbge?: IntNullableFilter<"Pais"> | number | null
     cidades?: CidadeListRelationFilter
+    ufs?: UnidadeFederacaoListRelationFilter
   }, "id">
 
   export type PaisOrderByWithAggregationInput = {
@@ -47658,6 +47734,8 @@ export namespace Prisma {
     id?: StringFilter<"UnidadeFederacao"> | string
     descricao?: StringFilter<"UnidadeFederacao"> | string
     cdIbge?: IntNullableFilter<"UnidadeFederacao"> | number | null
+    cdPais?: IntFilter<"UnidadeFederacao"> | number
+    pais?: XOR<PaisScalarRelationFilter, PaisWhereInput>
     cidades?: CidadeListRelationFilter
   }
 
@@ -47665,6 +47743,8 @@ export namespace Prisma {
     id?: SortOrder
     descricao?: SortOrder
     cdIbge?: SortOrderInput | SortOrder
+    cdPais?: SortOrder
+    pais?: PaisOrderByWithRelationInput
     cidades?: CidadeOrderByRelationAggregateInput
   }
 
@@ -47675,6 +47755,8 @@ export namespace Prisma {
     NOT?: UnidadeFederacaoWhereInput | UnidadeFederacaoWhereInput[]
     descricao?: StringFilter<"UnidadeFederacao"> | string
     cdIbge?: IntNullableFilter<"UnidadeFederacao"> | number | null
+    cdPais?: IntFilter<"UnidadeFederacao"> | number
+    pais?: XOR<PaisScalarRelationFilter, PaisWhereInput>
     cidades?: CidadeListRelationFilter
   }, "id">
 
@@ -47682,6 +47764,7 @@ export namespace Prisma {
     id?: SortOrder
     descricao?: SortOrder
     cdIbge?: SortOrderInput | SortOrder
+    cdPais?: SortOrder
     _count?: UnidadeFederacaoCountOrderByAggregateInput
     _avg?: UnidadeFederacaoAvgOrderByAggregateInput
     _max?: UnidadeFederacaoMaxOrderByAggregateInput
@@ -47696,6 +47779,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"UnidadeFederacao"> | string
     descricao?: StringWithAggregatesFilter<"UnidadeFederacao"> | string
     cdIbge?: IntNullableWithAggregatesFilter<"UnidadeFederacao"> | number | null
+    cdPais?: IntWithAggregatesFilter<"UnidadeFederacao"> | number
   }
 
   export type CidadeWhereInput = {
@@ -47733,6 +47817,7 @@ export namespace Prisma {
 
   export type CidadeWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    descricao_cdUf?: CidadeDescricaoCdUfCompoundUniqueInput
     AND?: CidadeWhereInput | CidadeWhereInput[]
     OR?: CidadeWhereInput[]
     NOT?: CidadeWhereInput | CidadeWhereInput[]
@@ -47747,7 +47832,7 @@ export namespace Prisma {
     uf?: XOR<UnidadeFederacaoScalarRelationFilter, UnidadeFederacaoWhereInput>
     distritos?: DistritoListRelationFilter
     enderecos?: EnderecoListRelationFilter
-  }, "id">
+  }, "id" | "descricao_cdUf">
 
   export type CidadeOrderByWithAggregationInput = {
     id?: SortOrder
@@ -49725,6 +49810,7 @@ export namespace Prisma {
     nacionalidade?: string | null
     cdIbge?: number | null
     cidades?: CidadeCreateNestedManyWithoutPaisInput
+    ufs?: UnidadeFederacaoCreateNestedManyWithoutPaisInput
   }
 
   export type PaisUncheckedCreateInput = {
@@ -49733,6 +49819,7 @@ export namespace Prisma {
     nacionalidade?: string | null
     cdIbge?: number | null
     cidades?: CidadeUncheckedCreateNestedManyWithoutPaisInput
+    ufs?: UnidadeFederacaoUncheckedCreateNestedManyWithoutPaisInput
   }
 
   export type PaisUpdateInput = {
@@ -49740,6 +49827,7 @@ export namespace Prisma {
     nacionalidade?: NullableStringFieldUpdateOperationsInput | string | null
     cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
     cidades?: CidadeUpdateManyWithoutPaisNestedInput
+    ufs?: UnidadeFederacaoUpdateManyWithoutPaisNestedInput
   }
 
   export type PaisUncheckedUpdateInput = {
@@ -49748,6 +49836,7 @@ export namespace Prisma {
     nacionalidade?: NullableStringFieldUpdateOperationsInput | string | null
     cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
     cidades?: CidadeUncheckedUpdateManyWithoutPaisNestedInput
+    ufs?: UnidadeFederacaoUncheckedUpdateManyWithoutPaisNestedInput
   }
 
   export type PaisCreateManyInput = {
@@ -49774,6 +49863,7 @@ export namespace Prisma {
     id: string
     descricao: string
     cdIbge?: number | null
+    pais: PaisCreateNestedOneWithoutUfsInput
     cidades?: CidadeCreateNestedManyWithoutUfInput
   }
 
@@ -49781,6 +49871,7 @@ export namespace Prisma {
     id: string
     descricao: string
     cdIbge?: number | null
+    cdPais: number
     cidades?: CidadeUncheckedCreateNestedManyWithoutUfInput
   }
 
@@ -49788,6 +49879,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     descricao?: StringFieldUpdateOperationsInput | string
     cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    pais?: PaisUpdateOneRequiredWithoutUfsNestedInput
     cidades?: CidadeUpdateManyWithoutUfNestedInput
   }
 
@@ -49795,6 +49887,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     descricao?: StringFieldUpdateOperationsInput | string
     cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    cdPais?: IntFieldUpdateOperationsInput | number
     cidades?: CidadeUncheckedUpdateManyWithoutUfNestedInput
   }
 
@@ -49802,6 +49895,7 @@ export namespace Prisma {
     id: string
     descricao: string
     cdIbge?: number | null
+    cdPais: number
   }
 
   export type UnidadeFederacaoUpdateManyMutationInput = {
@@ -49814,6 +49908,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     descricao?: StringFieldUpdateOperationsInput | string
     cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    cdPais?: IntFieldUpdateOperationsInput | number
   }
 
   export type CidadeCreateInput = {
@@ -51881,7 +51976,17 @@ export namespace Prisma {
     none?: CidadeWhereInput
   }
 
+  export type UnidadeFederacaoListRelationFilter = {
+    every?: UnidadeFederacaoWhereInput
+    some?: UnidadeFederacaoWhereInput
+    none?: UnidadeFederacaoWhereInput
+  }
+
   export type CidadeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UnidadeFederacaoOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -51916,41 +52021,46 @@ export namespace Prisma {
     cdIbge?: SortOrder
   }
 
+  export type PaisScalarRelationFilter = {
+    is?: PaisWhereInput
+    isNot?: PaisWhereInput
+  }
+
   export type UnidadeFederacaoCountOrderByAggregateInput = {
     id?: SortOrder
     descricao?: SortOrder
     cdIbge?: SortOrder
+    cdPais?: SortOrder
   }
 
   export type UnidadeFederacaoAvgOrderByAggregateInput = {
     cdIbge?: SortOrder
+    cdPais?: SortOrder
   }
 
   export type UnidadeFederacaoMaxOrderByAggregateInput = {
     id?: SortOrder
     descricao?: SortOrder
     cdIbge?: SortOrder
+    cdPais?: SortOrder
   }
 
   export type UnidadeFederacaoMinOrderByAggregateInput = {
     id?: SortOrder
     descricao?: SortOrder
     cdIbge?: SortOrder
+    cdPais?: SortOrder
   }
 
   export type UnidadeFederacaoSumOrderByAggregateInput = {
     cdIbge?: SortOrder
+    cdPais?: SortOrder
   }
 
   export type BairroListRelationFilter = {
     every?: BairroWhereInput
     some?: BairroWhereInput
     none?: BairroWhereInput
-  }
-
-  export type PaisScalarRelationFilter = {
-    is?: PaisWhereInput
-    isNot?: PaisWhereInput
   }
 
   export type UnidadeFederacaoScalarRelationFilter = {
@@ -51980,6 +52090,11 @@ export namespace Prisma {
 
   export type EnderecoOrderByRelationAggregateInput = {
     _count?: SortOrder
+  }
+
+  export type CidadeDescricaoCdUfCompoundUniqueInput = {
+    descricao: string
+    cdUf: string
   }
 
   export type CidadeCountOrderByAggregateInput = {
@@ -54516,11 +54631,25 @@ export namespace Prisma {
     connect?: CidadeWhereUniqueInput | CidadeWhereUniqueInput[]
   }
 
+  export type UnidadeFederacaoCreateNestedManyWithoutPaisInput = {
+    create?: XOR<UnidadeFederacaoCreateWithoutPaisInput, UnidadeFederacaoUncheckedCreateWithoutPaisInput> | UnidadeFederacaoCreateWithoutPaisInput[] | UnidadeFederacaoUncheckedCreateWithoutPaisInput[]
+    connectOrCreate?: UnidadeFederacaoCreateOrConnectWithoutPaisInput | UnidadeFederacaoCreateOrConnectWithoutPaisInput[]
+    createMany?: UnidadeFederacaoCreateManyPaisInputEnvelope
+    connect?: UnidadeFederacaoWhereUniqueInput | UnidadeFederacaoWhereUniqueInput[]
+  }
+
   export type CidadeUncheckedCreateNestedManyWithoutPaisInput = {
     create?: XOR<CidadeCreateWithoutPaisInput, CidadeUncheckedCreateWithoutPaisInput> | CidadeCreateWithoutPaisInput[] | CidadeUncheckedCreateWithoutPaisInput[]
     connectOrCreate?: CidadeCreateOrConnectWithoutPaisInput | CidadeCreateOrConnectWithoutPaisInput[]
     createMany?: CidadeCreateManyPaisInputEnvelope
     connect?: CidadeWhereUniqueInput | CidadeWhereUniqueInput[]
+  }
+
+  export type UnidadeFederacaoUncheckedCreateNestedManyWithoutPaisInput = {
+    create?: XOR<UnidadeFederacaoCreateWithoutPaisInput, UnidadeFederacaoUncheckedCreateWithoutPaisInput> | UnidadeFederacaoCreateWithoutPaisInput[] | UnidadeFederacaoUncheckedCreateWithoutPaisInput[]
+    connectOrCreate?: UnidadeFederacaoCreateOrConnectWithoutPaisInput | UnidadeFederacaoCreateOrConnectWithoutPaisInput[]
+    createMany?: UnidadeFederacaoCreateManyPaisInputEnvelope
+    connect?: UnidadeFederacaoWhereUniqueInput | UnidadeFederacaoWhereUniqueInput[]
   }
 
   export type CidadeUpdateManyWithoutPaisNestedInput = {
@@ -54537,6 +54666,20 @@ export namespace Prisma {
     deleteMany?: CidadeScalarWhereInput | CidadeScalarWhereInput[]
   }
 
+  export type UnidadeFederacaoUpdateManyWithoutPaisNestedInput = {
+    create?: XOR<UnidadeFederacaoCreateWithoutPaisInput, UnidadeFederacaoUncheckedCreateWithoutPaisInput> | UnidadeFederacaoCreateWithoutPaisInput[] | UnidadeFederacaoUncheckedCreateWithoutPaisInput[]
+    connectOrCreate?: UnidadeFederacaoCreateOrConnectWithoutPaisInput | UnidadeFederacaoCreateOrConnectWithoutPaisInput[]
+    upsert?: UnidadeFederacaoUpsertWithWhereUniqueWithoutPaisInput | UnidadeFederacaoUpsertWithWhereUniqueWithoutPaisInput[]
+    createMany?: UnidadeFederacaoCreateManyPaisInputEnvelope
+    set?: UnidadeFederacaoWhereUniqueInput | UnidadeFederacaoWhereUniqueInput[]
+    disconnect?: UnidadeFederacaoWhereUniqueInput | UnidadeFederacaoWhereUniqueInput[]
+    delete?: UnidadeFederacaoWhereUniqueInput | UnidadeFederacaoWhereUniqueInput[]
+    connect?: UnidadeFederacaoWhereUniqueInput | UnidadeFederacaoWhereUniqueInput[]
+    update?: UnidadeFederacaoUpdateWithWhereUniqueWithoutPaisInput | UnidadeFederacaoUpdateWithWhereUniqueWithoutPaisInput[]
+    updateMany?: UnidadeFederacaoUpdateManyWithWhereWithoutPaisInput | UnidadeFederacaoUpdateManyWithWhereWithoutPaisInput[]
+    deleteMany?: UnidadeFederacaoScalarWhereInput | UnidadeFederacaoScalarWhereInput[]
+  }
+
   export type CidadeUncheckedUpdateManyWithoutPaisNestedInput = {
     create?: XOR<CidadeCreateWithoutPaisInput, CidadeUncheckedCreateWithoutPaisInput> | CidadeCreateWithoutPaisInput[] | CidadeUncheckedCreateWithoutPaisInput[]
     connectOrCreate?: CidadeCreateOrConnectWithoutPaisInput | CidadeCreateOrConnectWithoutPaisInput[]
@@ -54551,6 +54694,26 @@ export namespace Prisma {
     deleteMany?: CidadeScalarWhereInput | CidadeScalarWhereInput[]
   }
 
+  export type UnidadeFederacaoUncheckedUpdateManyWithoutPaisNestedInput = {
+    create?: XOR<UnidadeFederacaoCreateWithoutPaisInput, UnidadeFederacaoUncheckedCreateWithoutPaisInput> | UnidadeFederacaoCreateWithoutPaisInput[] | UnidadeFederacaoUncheckedCreateWithoutPaisInput[]
+    connectOrCreate?: UnidadeFederacaoCreateOrConnectWithoutPaisInput | UnidadeFederacaoCreateOrConnectWithoutPaisInput[]
+    upsert?: UnidadeFederacaoUpsertWithWhereUniqueWithoutPaisInput | UnidadeFederacaoUpsertWithWhereUniqueWithoutPaisInput[]
+    createMany?: UnidadeFederacaoCreateManyPaisInputEnvelope
+    set?: UnidadeFederacaoWhereUniqueInput | UnidadeFederacaoWhereUniqueInput[]
+    disconnect?: UnidadeFederacaoWhereUniqueInput | UnidadeFederacaoWhereUniqueInput[]
+    delete?: UnidadeFederacaoWhereUniqueInput | UnidadeFederacaoWhereUniqueInput[]
+    connect?: UnidadeFederacaoWhereUniqueInput | UnidadeFederacaoWhereUniqueInput[]
+    update?: UnidadeFederacaoUpdateWithWhereUniqueWithoutPaisInput | UnidadeFederacaoUpdateWithWhereUniqueWithoutPaisInput[]
+    updateMany?: UnidadeFederacaoUpdateManyWithWhereWithoutPaisInput | UnidadeFederacaoUpdateManyWithWhereWithoutPaisInput[]
+    deleteMany?: UnidadeFederacaoScalarWhereInput | UnidadeFederacaoScalarWhereInput[]
+  }
+
+  export type PaisCreateNestedOneWithoutUfsInput = {
+    create?: XOR<PaisCreateWithoutUfsInput, PaisUncheckedCreateWithoutUfsInput>
+    connectOrCreate?: PaisCreateOrConnectWithoutUfsInput
+    connect?: PaisWhereUniqueInput
+  }
+
   export type CidadeCreateNestedManyWithoutUfInput = {
     create?: XOR<CidadeCreateWithoutUfInput, CidadeUncheckedCreateWithoutUfInput> | CidadeCreateWithoutUfInput[] | CidadeUncheckedCreateWithoutUfInput[]
     connectOrCreate?: CidadeCreateOrConnectWithoutUfInput | CidadeCreateOrConnectWithoutUfInput[]
@@ -54563,6 +54726,14 @@ export namespace Prisma {
     connectOrCreate?: CidadeCreateOrConnectWithoutUfInput | CidadeCreateOrConnectWithoutUfInput[]
     createMany?: CidadeCreateManyUfInputEnvelope
     connect?: CidadeWhereUniqueInput | CidadeWhereUniqueInput[]
+  }
+
+  export type PaisUpdateOneRequiredWithoutUfsNestedInput = {
+    create?: XOR<PaisCreateWithoutUfsInput, PaisUncheckedCreateWithoutUfsInput>
+    connectOrCreate?: PaisCreateOrConnectWithoutUfsInput
+    upsert?: PaisUpsertWithoutUfsInput
+    connect?: PaisWhereUniqueInput
+    update?: XOR<XOR<PaisUpdateToOneWithWhereWithoutUfsInput, PaisUpdateWithoutUfsInput>, PaisUncheckedUpdateWithoutUfsInput>
   }
 
   export type CidadeUpdateManyWithoutUfNestedInput = {
@@ -58818,6 +58989,30 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UnidadeFederacaoCreateWithoutPaisInput = {
+    id: string
+    descricao: string
+    cdIbge?: number | null
+    cidades?: CidadeCreateNestedManyWithoutUfInput
+  }
+
+  export type UnidadeFederacaoUncheckedCreateWithoutPaisInput = {
+    id: string
+    descricao: string
+    cdIbge?: number | null
+    cidades?: CidadeUncheckedCreateNestedManyWithoutUfInput
+  }
+
+  export type UnidadeFederacaoCreateOrConnectWithoutPaisInput = {
+    where: UnidadeFederacaoWhereUniqueInput
+    create: XOR<UnidadeFederacaoCreateWithoutPaisInput, UnidadeFederacaoUncheckedCreateWithoutPaisInput>
+  }
+
+  export type UnidadeFederacaoCreateManyPaisInputEnvelope = {
+    data: UnidadeFederacaoCreateManyPaisInput | UnidadeFederacaoCreateManyPaisInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CidadeUpsertWithWhereUniqueWithoutPaisInput = {
     where: CidadeWhereUniqueInput
     update: XOR<CidadeUpdateWithoutPaisInput, CidadeUncheckedUpdateWithoutPaisInput>
@@ -58845,6 +59040,52 @@ export namespace Prisma {
     cepGeral?: StringNullableFilter<"Cidade"> | string | null
     cdIbge?: IntNullableFilter<"Cidade"> | number | null
     stInativo?: EnumSimNaoNullableFilter<"Cidade"> | $Enums.SimNao | null
+  }
+
+  export type UnidadeFederacaoUpsertWithWhereUniqueWithoutPaisInput = {
+    where: UnidadeFederacaoWhereUniqueInput
+    update: XOR<UnidadeFederacaoUpdateWithoutPaisInput, UnidadeFederacaoUncheckedUpdateWithoutPaisInput>
+    create: XOR<UnidadeFederacaoCreateWithoutPaisInput, UnidadeFederacaoUncheckedCreateWithoutPaisInput>
+  }
+
+  export type UnidadeFederacaoUpdateWithWhereUniqueWithoutPaisInput = {
+    where: UnidadeFederacaoWhereUniqueInput
+    data: XOR<UnidadeFederacaoUpdateWithoutPaisInput, UnidadeFederacaoUncheckedUpdateWithoutPaisInput>
+  }
+
+  export type UnidadeFederacaoUpdateManyWithWhereWithoutPaisInput = {
+    where: UnidadeFederacaoScalarWhereInput
+    data: XOR<UnidadeFederacaoUpdateManyMutationInput, UnidadeFederacaoUncheckedUpdateManyWithoutPaisInput>
+  }
+
+  export type UnidadeFederacaoScalarWhereInput = {
+    AND?: UnidadeFederacaoScalarWhereInput | UnidadeFederacaoScalarWhereInput[]
+    OR?: UnidadeFederacaoScalarWhereInput[]
+    NOT?: UnidadeFederacaoScalarWhereInput | UnidadeFederacaoScalarWhereInput[]
+    id?: StringFilter<"UnidadeFederacao"> | string
+    descricao?: StringFilter<"UnidadeFederacao"> | string
+    cdIbge?: IntNullableFilter<"UnidadeFederacao"> | number | null
+    cdPais?: IntFilter<"UnidadeFederacao"> | number
+  }
+
+  export type PaisCreateWithoutUfsInput = {
+    descricao: string
+    nacionalidade?: string | null
+    cdIbge?: number | null
+    cidades?: CidadeCreateNestedManyWithoutPaisInput
+  }
+
+  export type PaisUncheckedCreateWithoutUfsInput = {
+    id?: number
+    descricao: string
+    nacionalidade?: string | null
+    cdIbge?: number | null
+    cidades?: CidadeUncheckedCreateNestedManyWithoutPaisInput
+  }
+
+  export type PaisCreateOrConnectWithoutUfsInput = {
+    where: PaisWhereUniqueInput
+    create: XOR<PaisCreateWithoutUfsInput, PaisUncheckedCreateWithoutUfsInput>
   }
 
   export type CidadeCreateWithoutUfInput = {
@@ -58878,6 +59119,32 @@ export namespace Prisma {
   export type CidadeCreateManyUfInputEnvelope = {
     data: CidadeCreateManyUfInput | CidadeCreateManyUfInput[]
     skipDuplicates?: boolean
+  }
+
+  export type PaisUpsertWithoutUfsInput = {
+    update: XOR<PaisUpdateWithoutUfsInput, PaisUncheckedUpdateWithoutUfsInput>
+    create: XOR<PaisCreateWithoutUfsInput, PaisUncheckedCreateWithoutUfsInput>
+    where?: PaisWhereInput
+  }
+
+  export type PaisUpdateToOneWithWhereWithoutUfsInput = {
+    where?: PaisWhereInput
+    data: XOR<PaisUpdateWithoutUfsInput, PaisUncheckedUpdateWithoutUfsInput>
+  }
+
+  export type PaisUpdateWithoutUfsInput = {
+    descricao?: StringFieldUpdateOperationsInput | string
+    nacionalidade?: NullableStringFieldUpdateOperationsInput | string | null
+    cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    cidades?: CidadeUpdateManyWithoutPaisNestedInput
+  }
+
+  export type PaisUncheckedUpdateWithoutUfsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    descricao?: StringFieldUpdateOperationsInput | string
+    nacionalidade?: NullableStringFieldUpdateOperationsInput | string | null
+    cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    cidades?: CidadeUncheckedUpdateManyWithoutPaisNestedInput
   }
 
   export type CidadeUpsertWithWhereUniqueWithoutUfInput = {
@@ -58925,6 +59192,7 @@ export namespace Prisma {
     descricao: string
     nacionalidade?: string | null
     cdIbge?: number | null
+    ufs?: UnidadeFederacaoCreateNestedManyWithoutPaisInput
   }
 
   export type PaisUncheckedCreateWithoutCidadesInput = {
@@ -58932,6 +59200,7 @@ export namespace Prisma {
     descricao: string
     nacionalidade?: string | null
     cdIbge?: number | null
+    ufs?: UnidadeFederacaoUncheckedCreateNestedManyWithoutPaisInput
   }
 
   export type PaisCreateOrConnectWithoutCidadesInput = {
@@ -58943,12 +59212,14 @@ export namespace Prisma {
     id: string
     descricao: string
     cdIbge?: number | null
+    pais: PaisCreateNestedOneWithoutUfsInput
   }
 
   export type UnidadeFederacaoUncheckedCreateWithoutCidadesInput = {
     id: string
     descricao: string
     cdIbge?: number | null
+    cdPais: number
   }
 
   export type UnidadeFederacaoCreateOrConnectWithoutCidadesInput = {
@@ -59056,6 +59327,7 @@ export namespace Prisma {
     descricao?: StringFieldUpdateOperationsInput | string
     nacionalidade?: NullableStringFieldUpdateOperationsInput | string | null
     cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    ufs?: UnidadeFederacaoUpdateManyWithoutPaisNestedInput
   }
 
   export type PaisUncheckedUpdateWithoutCidadesInput = {
@@ -59063,6 +59335,7 @@ export namespace Prisma {
     descricao?: StringFieldUpdateOperationsInput | string
     nacionalidade?: NullableStringFieldUpdateOperationsInput | string | null
     cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    ufs?: UnidadeFederacaoUncheckedUpdateManyWithoutPaisNestedInput
   }
 
   export type UnidadeFederacaoUpsertWithoutCidadesInput = {
@@ -59080,12 +59353,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     descricao?: StringFieldUpdateOperationsInput | string
     cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    pais?: PaisUpdateOneRequiredWithoutUfsNestedInput
   }
 
   export type UnidadeFederacaoUncheckedUpdateWithoutCidadesInput = {
     id?: StringFieldUpdateOperationsInput | string
     descricao?: StringFieldUpdateOperationsInput | string
     cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    cdPais?: IntFieldUpdateOperationsInput | number
   }
 
   export type DistritoUpsertWithWhereUniqueWithoutCidadeInput = {
@@ -61816,6 +62091,12 @@ export namespace Prisma {
     stInativo?: $Enums.SimNao | null
   }
 
+  export type UnidadeFederacaoCreateManyPaisInput = {
+    id: string
+    descricao: string
+    cdIbge?: number | null
+  }
+
   export type CidadeUpdateWithoutPaisInput = {
     descricao?: StringFieldUpdateOperationsInput | string
     cepGeral?: NullableStringFieldUpdateOperationsInput | string | null
@@ -61846,6 +62127,26 @@ export namespace Prisma {
     cepGeral?: NullableStringFieldUpdateOperationsInput | string | null
     cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
     stInativo?: NullableEnumSimNaoFieldUpdateOperationsInput | $Enums.SimNao | null
+  }
+
+  export type UnidadeFederacaoUpdateWithoutPaisInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    descricao?: StringFieldUpdateOperationsInput | string
+    cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    cidades?: CidadeUpdateManyWithoutUfNestedInput
+  }
+
+  export type UnidadeFederacaoUncheckedUpdateWithoutPaisInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    descricao?: StringFieldUpdateOperationsInput | string
+    cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
+    cidades?: CidadeUncheckedUpdateManyWithoutUfNestedInput
+  }
+
+  export type UnidadeFederacaoUncheckedUpdateManyWithoutPaisInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    descricao?: StringFieldUpdateOperationsInput | string
+    cdIbge?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type CidadeCreateManyUfInput = {

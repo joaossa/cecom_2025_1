@@ -261,7 +261,8 @@ exports.Prisma.PaisScalarFieldEnum = {
 exports.Prisma.UnidadeFederacaoScalarFieldEnum = {
   id: 'id',
   descricao: 'descricao',
-  cdIbge: 'cdIbge'
+  cdIbge: 'cdIbge',
+  cdPais: 'cdPais'
 };
 
 exports.Prisma.CidadeScalarFieldEnum = {
